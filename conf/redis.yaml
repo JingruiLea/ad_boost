@@ -1,0 +1,47 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: redis
+spec:
+  selector:
+    matchLabels:
+      app: redis
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: redis
+    spec:
+      containers:
+        - name: redis
+          image: redis:6.2.5
+          command:
+            - redis-server
+            - /data/redis.conf
+          env:
+            - name: REDIS_USERNAME
+              value: "taimer"
+            - name: REDIS_PASSWORD
+              value: "myredistaimer231"
+          ports:
+            - containerPort: 6379
+              name: redis
+          resources:
+            limits:
+              cpu: "0.5"
+              memory: "512Mi"
+            requests:
+              cpu: "0.2"
+              memory: "256Mi"
+          volumeMounts:
+            - name: redis-config
+              mountPath: /data
+            - name: redis-data
+              mountPath: /data/redis-data
+      volumes:
+        - name: redis-config
+          configMap:
+            name: redis-config
+        - name: redis-data
+          persistentVolumeClaim:
+            claimName: redis-pvc

@@ -1,0 +1,37 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: taimer-backend
+spec:
+  replicas: 2
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 0
+  selector:
+    matchLabels:
+      app: taimer-backend
+  template:
+    metadata:
+      labels:
+        app: taimer-backend
+    spec:
+      containers:
+        - name: taimer-backend
+          image: registry.ap-northeast-1.aliyuncs.com/taimer/taimer_backend:20230515011055
+          ports:
+            - containerPort: 9000
+          env:
+            - name: TZ
+              value: Asia/Shanghai
+          volumeMounts:
+            - mountPath: "/opt/output/log"
+              subPath: "log"
+              name: log-storage
+      imagePullSecrets:
+        - name: aliyun-secret
+      volumes:
+        - name: log-storage
+          persistentVolumeClaim:
+            claimName: log-pvc

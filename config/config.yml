@@ -1,0 +1,26 @@
+Product:
+  EnablePprof: true
+  ServicePort: "8866"
+  LogLevel: 0
+  LogInterval: "hour"
+  EnableMetrics: true
+  EnableDebugServer: true
+  ConsoleLog: false
+  DatabusLog: false
+  AgentLog: true
+  FileLog: true
+  EnableTracing: true
+  GetRealIP: true
+Develop:
+  EnablePprof: true
+  ServicePort: "8866"
+  LogLevel: 0
+  LogInterval: "hour"
+  EnableMetrics: false
+  EnableDebugServer: true
+  ConsoleLog: true
+  DatabusLog: false
+  AgentLog: false
+  FileLog: true
+  EnableTracing: true
+  GetRealIP: true

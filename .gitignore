@@ -1,0 +1,10 @@
+.idea/*
+.idea
+.vscode/*
+.vscode
+output/*
+output
+log/*
+log
+vendor/*
+vendor
