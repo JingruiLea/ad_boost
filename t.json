@@ -1,0 +1,112 @@
+{
+  "code": 0,
+  "data": {
+    "ad_create_time": "2023-08-02 20:08:47",
+    "ad_id": 1773119076620308,
+    "ad_modify_time": "2023-08-03 11:02:38",
+    "audience": {
+      "action_categories": [
+        1302,
+        1307,
+        1309,
+        130501,
+        130603,
+        1902,
+        1903,
+        1904,
+        1905,
+        1906,
+        1907,
+        1908,
+        1909,
+        1910,
+        1911,
+        1913
+      ],
+      "action_days": 180,
+      "action_scene": [
+        "E-COMMERCE"
+      ],
+      "age": [
+        "AGE_BETWEEN_31_40",
+        "AGE_BETWEEN_41_49"
+      ],
+      "audience_mode": "CUSTOM",
+      "auto_extend_enabled": 0,
+      "district": "NONE",
+      "exclude_limited_region": 1,
+      "gender": "GENDER_MALE",
+      "inactive_retargeting_tags": [],
+      "interest_categories": [
+        13
+      ],
+      "live_platform_tags": [],
+      "new_customer": "NONE",
+      "smart_interest_action": "CUSTOM"
+    },
+    "aweme_info": [
+      {
+        "aweme_avatar": "https://p3.douyinpic.com/img/aweme-avatar/tos-cn-avt-1115_2d15c828c37e0c6db718bc14c4554ae9~c5_168x168.webp?from=3782654143",
+        "aweme_id": 2893532936291624,
+        "aweme_name": "米先生 潮牌穿搭 KMVN",
+        "aweme_show_id": "MXSCP10"
+      }
+    ],
+    "campaign_id": 1773116233162820,
+    "campaign_scene": "DAILY_SALE",
+    "creative_auto_generate": 0,
+    "creative_list": [
+      {
+        "creative_create_time": "2023-08-02 20:08:47",
+        "creative_id": 1773119076018211,
+        "creative_modify_time": "2023-08-02 20:09:22",
+        "image_mode": "AWEME_LIVE_ROOM"
+      }
+    ],
+    "creative_material_mode": "CUSTOM_CREATIVE",
+    "delivery_setting": {
+      "allow_qcpx": false,
+      "budget": 511,
+      "budget_mode": "BUDGET_MODE_DAY",
+      "deep_bid_type": "MIN",
+      "deep_external_action": "AD_CONVERT_TYPE_LIVE_PAY_ROI",
+      "end_time": "2033-08-02",
+      "external_action": "AD_CONVERT_TYPE_LIVE_SUCCESSORDER_PAY",
+      "live_schedule_type": "SCHEDULE_FROM_NOW",
+      "product_new_open": false,
+      "roi_goal": 7,
+      "schedule_fixed_range": 0,
+      "schedule_time": "111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111",
+      "smart_bid_type": "SMART_BID_CUSTOM",
+      "start_time": "2023-08-02",
+      "video_schedule_type": "SCHEDULE_FROM_NOW"
+    },
+    "dynamic_creative": 0,
+    "first_industry_id": 1904,
+    "is_homepage_hide": 0,
+    "keywords": [],
+    "lab_ad_type": "NOT_LAB_AD",
+    "marketing_goal": "LIVE_PROM_GOODS",
+    "marketing_scene": "FEED",
+    "name": "20230802_推直播间_日常销售_通投广告_自定义_15:33:42",
+    "opt_status": "DISABLE",
+    "pivative_words": {},
+    "product_info": [],
+    "programmatic_creative_card": {},
+    "programmatic_creative_title_list": [],
+    "room_info": [
+      {
+        "anchor_avatar": "https://p3.douyinpic.com/img/aweme-avatar/tos-cn-avt-1115_2d15c828c37e0c6db718bc14c4554ae9~c5_168x168.webp?from=3782654143",
+        "anchor_id": 2893532936291624,
+        "anchor_name": "米先生 潮牌穿搭 KMVN",
+        "room_status": "LIVING"
+      }
+    ],
+    "second_industry_id": 190410,
+    "status": "DISABLE",
+    "third_industry_id": 19041111,
+    "track_url": {}
+  },
+  "message": "OK",
+  "request_id": "20230811225557D238B7A6106B11E5F037"
+}

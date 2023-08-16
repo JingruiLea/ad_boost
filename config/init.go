@@ -2,9 +2,9 @@ package config
 
 import (
 	"fmt"
-	"github.com/JingruiLea/ad_boost/utils"
 	"github.com/joho/godotenv"
 	"os"
+	"strconv"
 )
 
 type Config struct {
@@ -29,7 +29,12 @@ func init() {
 	if workDir == "" {
 		workDir, _ = os.Getwd()
 	}
-	_ = godotenv.Overload(".env" + os.Getenv("ENV"))
+	env := os.Getenv("ENV")
+	if env != "" {
+		_ = godotenv.Overload(".env." + env)
+	} else {
+		_ = godotenv.Overload("/Users/ljr/go/src/github.com/JingruiLea/ad_boost/.env")
+	}
 
 	fmt.Println(os.Environ())
 	Configs = &Config{}
@@ -39,15 +44,15 @@ func init() {
 	}
 	Configs.RedisPort = os.Getenv("REDIS_PORT")
 	if Configs.RedisPort == "" {
-		panic("redis port is empty")
+		panic("redis_dal port is empty")
 	}
 	Configs.RedisPassword = os.Getenv("REDIS_PASSWORD")
 	if Configs.RedisPassword == "" {
-		panic("redis password is empty")
+		panic("redis_dal password is empty")
 	}
 	Configs.RedisUsername = os.Getenv("REDIS_USERNAME")
 	if Configs.RedisUsername == "" {
-		panic("redis username is empty")
+		panic("redis_dal username is empty")
 	}
 	Configs.RedisDBIndex = GetRedisDBIndex()
 
@@ -65,7 +70,7 @@ func init() {
 	}
 	Configs.DBUser = os.Getenv("DB_USER")
 	if Configs.DBUser == "" {
-		panic("db user is empty")
+		panic("db auth is empty")
 	}
 	Configs.DBPass = os.Getenv("DB_PASSWORD")
 	if Configs.DBPass == "" {
@@ -87,5 +92,17 @@ func MustGetSvcName() string {
 }
 
 func GetRedisDBIndex() int {
-	return int(utils.Str2I64(os.Getenv("REDIS_DB_INDEX")))
+	return int(Str2I64(os.Getenv("REDIS_DB_INDEX")))
+}
+
+func Str2I64(s string, defaultValue ...int64) int64 {
+	var ret int64
+	ret, err := strconv.ParseInt(s, 10, 64)
+	if err != nil {
+		if len(defaultValue) > 0 {
+			return defaultValue[0]
+		}
+		return 0
+	}
+	return ret
 }

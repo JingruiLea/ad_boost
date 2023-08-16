@@ -12,6 +12,6 @@ if [ ! -f "$yaml_file" ]; then
     exit 1
 fi
 
-remote=taimer
+remote=ali
 
 ssh "$remote" "kubectl apply -f -" < "$yaml_file"

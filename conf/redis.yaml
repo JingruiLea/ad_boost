@@ -13,11 +13,11 @@ spec:
         app: redis
     spec:
       containers:
-        - name: redis
+        - name: redis_dal
           image: redis:6.2.5
           command:
-            - redis-server
-            - /data/redis.conf
+            - redis_dal-server
+            - /data/redis_dal.conf
           env:
             - name: REDIS_USERNAME
               value: "taimer"
@@ -25,7 +25,7 @@ spec:
               value: "myredistaimer231"
           ports:
             - containerPort: 6379
-              name: redis
+              name: redis_dal
           resources:
             limits:
               cpu: "0.5"
@@ -34,14 +34,14 @@ spec:
               cpu: "0.2"
               memory: "256Mi"
           volumeMounts:
-            - name: redis-config
+            - name: redis_dal-config
               mountPath: /data
-            - name: redis-data
-              mountPath: /data/redis-data
+            - name: redis_dal-data
+              mountPath: /data/redis_dal-data
       volumes:
-        - name: redis-config
+        - name: redis_dal-config
           configMap:
             name: redis-config
-        - name: redis-data
+        - name: redis_dal-data
           persistentVolumeClaim:
-            claimName: redis-pvc
+            claimName: redis_dal-pvc

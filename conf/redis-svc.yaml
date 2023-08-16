@@ -13,4 +13,4 @@ spec:
       port: 6379
       targetPort: 6379
       nodePort: 30079
-      name: redis
+      name: redis_dal

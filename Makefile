@@ -12,3 +12,6 @@ deploy:
 
 run:
 	./output/bootstrap.sh
+
+l:
+	./log.sh

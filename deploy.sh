@@ -28,15 +28,15 @@ if [ -z "$IMAGE_TAG" ]; then
   usage
 fi
 
-REMOTE_HOST=taimer
+REMOTE_HOST=ali
 
 KUBE_CONFIG=$(cat <<EOF
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: taimer-backend
+  name: ad-boost
 spec:
-  replicas: 2
+  replicas: 1
   strategy:
     type: RollingUpdate
     rollingUpdate:
@@ -44,20 +44,22 @@ spec:
       maxUnavailable: 0
   selector:
     matchLabels:
-      app: taimer-backend
+      app: ad-boost
   template:
     metadata:
       labels:
-        app: taimer-backend
+        app: ad-boost
     spec:
       containers:
-        - name: taimer-backend
-          image: registry.ap-northeast-1.aliyuncs.com/taimer/taimer_backend:$IMAGE_TAG
+        - name: ad-boost
+          image: registry.ap-southeast-1.aliyuncs.com/taimer/ad_boost:$IMAGE_TAG
           ports:
             - containerPort: 9000
           env:
             - name: TZ
               value: Asia/Shanghai
+            - name: ENV
+              value: production
           volumeMounts:
             - mountPath: "/opt/output/log"
               subPath: "log"

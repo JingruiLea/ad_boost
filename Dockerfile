@@ -1,4 +1,4 @@
-FROM --platform=linux/amd64 registry.ap-northeast-1.aliyuncs.com/taimer/golang:1.19 AS builder
+FROM --platform=linux/amd64 registry.ap-southeast-1.aliyuncs.com/taimer/golang:1.19 AS builder
 WORKDIR /go/src/github.com/JingruiLea/ad_boost
 COPY . .
 ENV GO111MODULE=on
@@ -8,7 +8,7 @@ ENV GOFLAGS="-mod=vendor"
 RUN chmod +x ./build.sh
 RUN ./build.sh
 
-FROM --platform=linux/amd64 registry.ap-northeast-1.aliyuncs.com/taimer/alpine:3.18
+FROM --platform=linux/amd64 registry.ap-southeast-1.aliyuncs.com/taimer/alpine:3.18
 COPY --from=builder /go/src/github.com/JingruiLea/ad_boost/output /opt/output
 
 ENV LANG zh_CN.UTF-8

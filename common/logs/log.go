@@ -1,9 +1,7 @@
 package logs
 
 import (
-	"github.com/JingruiLea/ad_boost/common/envs"
 	"github.com/JingruiLea/ad_boost/config"
-	"github.com/JingruiLea/ad_boost/utils"
 	"io"
 	"os"
 	"time"
@@ -25,13 +23,9 @@ func init() {
 		rotatelogs.WithMaxAge(time.Duration(180)*time.Hour*24),
 		rotatelogs.WithRotationTime(time.Duration(60)*time.Minute),
 	)
-	if envs.IsDev() {
-		mw := io.MultiWriter(os.Stdout, writer)
-		log.SetOutput(mw)
-	} else {
-		log.SetOutput(writer)
-	}
-	log.SetLevel(logrus.DebugLevel)
+	mw := io.MultiWriter(os.Stdout, writer)
+	log.SetOutput(mw)
+	log.SetLevel(logrus.InfoLevel)
 	log.AddHook(&truncateHook{})
 }
 
@@ -40,9 +34,14 @@ const DefaultXRequestIDKey = "x-request-id"
 func entry(ctx context.Context) *logrus.Entry {
 	entry := logrus.NewEntry(log)
 	entry = entry.WithContext(ctx)
-	reqID, _ := utils.GetReqID(ctx)
+	reqID, _ := GetReqID(ctx)
 	entry = entry.WithField(DefaultXRequestIDKey, reqID)
 	return entry
+}
+
+func GetReqID(ctx context.Context) (string, error) {
+	//TODO: implement this!
+	return "", nil
 }
 
 const maxLogLength = 1000

@@ -1,4 +1,4 @@
-package redis
+package redis_dal
 
 import (
 	"fmt"
@@ -18,7 +18,7 @@ func Init() {
 	}
 	redisClient = redis.NewClient(opt)
 	if redisClient == nil {
-		panic("redis client init failed")
+		panic("redis_dal client init failed")
 	}
 }
 

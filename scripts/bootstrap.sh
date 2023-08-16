@@ -20,7 +20,7 @@ if [ "X$RUNTIME_ROOT" == "X" ]; then
     exit 2
 fi
 
-BinaryName="taimer-backend"
+BinaryName="ad-boost"
 
 export WORK_DIR=$CURDIR
 
