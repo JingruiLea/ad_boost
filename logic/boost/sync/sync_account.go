@@ -32,7 +32,9 @@ func SyncAccount(ctx context.Context, accessToken string, refreshToken string) e
 		//根据ad_id查出所有ad_account
 		adAccounts, err := account.MGetAdInfoDetail(ctx, adIDs)
 		for _, adAccount := range adAccounts {
-			err = account_dal.CreateOrUpdateAdAccount(ctx, adAccount.ToModel())
+			adAccountModel := adAccount.ToModel()
+			adAccountModel.ShopID = shop.ShopID
+			err = account_dal.CreateOrUpdateAdAccount(ctx, adAccountModel)
 			if err != nil {
 				logs.CtxErrorf(ctx, "SyncAccount shop_dal.CreateOrUpdateAdAccount error: %v", err)
 				return err

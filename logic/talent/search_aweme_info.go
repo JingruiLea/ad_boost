@@ -14,7 +14,7 @@ func SearchAwemeInfo(ctx context.Context, adID int64, keyWord string) error {
 		"query_word":    keyWord,
 	}
 	var resp = make(map[string]interface{})
-	err := httpclient.NewClient().Get(ctx, "https://ad.oceanengine.com/open_api/2/tools/aweme_info_search/", httpclient.CommonHeader, &resp, params)
+	err := httpclient.NewClient().Get(ctx, "https://ad.oceanengine.com/open_api/2/tools/aweme_info_search/", &resp, params)
 	if err != nil {
 		logs.CtxErrorf(ctx, "GetAdAccount httpclient.NewClient().Get error: %v", err)
 		return err

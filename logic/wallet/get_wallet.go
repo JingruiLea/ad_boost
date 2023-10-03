@@ -21,7 +21,7 @@ func GetWallet(ctx context.Context, adID int64) error {
 		"advertiser_id": adID,
 	}
 	var resp GetWalletResp
-	err := httpclient.NewClient().Get(ctx, "https://ad.oceanengine.com/open_api/v1.0/qianchuan/finance/wallet/get/", httpclient.CommonHeader, &resp, params)
+	err := httpclient.NewClient().Get(ctx, "https://ad.oceanengine.com/open_api/v1.0/qianchuan/finance/wallet/get/", &resp, params)
 	if err != nil {
 		logs.CtxErrorf(ctx, "GetAdAccount httpclient.NewClient().Get error: %v", err)
 		return err

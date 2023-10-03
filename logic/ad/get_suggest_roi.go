@@ -29,22 +29,14 @@ func GetSuggestRoi(ctx context.Context, ad *ttypes.Ad) (float64, error) {
 	req.CampaignScene = ad.CampaignScene
 
 	mmm := utils.Obj2Map(req)
-	var resp GetSuggestRoiResp
-	err := httpclient.NewClient().Get(ctx, "https://ad.oceanengine.com/open_api/v1.0/qianchuan/suggest/roi/goal/", httpclient.CommonHeader, &resp, mmm)
+	var resp GetSuggestRoiRespData
+	err := httpclient.NewClient().AdGet(ctx, ad.AdvertiserID, "https://ad.oceanengine.com/open_api/v1.0/qianchuan/suggest/roi/goal/", &resp, mmm)
 	if err != nil {
 		logs.CtxErrorf(ctx, "GetSuggestRoi httpclient.NewClient().Get error: %v", err)
 		return 0, err
 	}
 	fmt.Printf("GetSuggestRoi respMap: %s", utils.GetJsonStr(resp))
-	if resp.Code != 0 {
-		return 0, fmt.Errorf("resp.Code != 0")
-	}
-	return resp.Data.EcpRoiGoal, err
-}
-
-type GetSuggestRoiResp struct {
-	Data *GetSuggestRoiRespData `json:"data"`
-	ttypes.BaseResp
+	return resp.EcpRoiGoal, err
 }
 
 type GetSuggestRoiRespData struct {

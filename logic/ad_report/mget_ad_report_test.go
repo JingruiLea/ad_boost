@@ -22,8 +22,8 @@ func TestMGetAdReport(t *testing.T) {
 				ctx: context.Background(),
 				req: &MGetAdReportReq{
 					AdvertiserID: 1748031128935424,
-					StartDate:    "2023-08-16",
-					EndDate:      "2023-08-17",
+					StartDate:    "2023-08-18",
+					EndDate:      "2023-08-18",
 					Fields:       MGetAdReportFieldAllOrderCreateRoi7Days.Common(),
 					Filtering: &MGetAdReportFiltering{
 						MarketingGoal: ttypes.MarketingGoalLivePromGoods,

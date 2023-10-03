@@ -11,25 +11,20 @@ import (
 	"gorm.io/datatypes"
 )
 
-func GetAwemeByAdID(ctx context.Context, adID int64, page, size int32) (*GetAwemeByAdIDRespData, error) {
-	var resp GetAwemeByAdIDResp
+func GetAwemeByAdID(ctx context.Context, accountID int64, page, size int32) (*GetAwemeByAdIDRespData, error) {
+	var resp GetAwemeByAdIDRespData
 	params := map[string]interface{}{
-		"advertiser_id": adID,
+		"advertiser_id": accountID,
 		"page":          page,
 		"page_size":     size,
 	}
-	err := httpclient.NewClient().Get(ctx, "https://ad.oceanengine.com/open_api/v1.0/qianchuan/aweme/authorized/get/", httpclient.CommonHeader, &resp, params)
+	err := httpclient.NewClient().AdGet(ctx, accountID, "https://ad.oceanengine.com/open_api/v1.0/qianchuan/aweme/authorized/get/", &resp, params)
 	if err != nil {
 		logs.CtxErrorf(ctx, "GetAdAccountByShopID httpclient.NewClient().Get error: %v", err)
 		return nil, err
 	}
 	fmt.Printf("GetAdAccountByShopID respMap: %s", utils.GetJsonStr(resp))
-	return resp.Data, err
-}
-
-type GetAwemeByAdIDResp struct {
-	ttypes.BaseResp
-	Data *GetAwemeByAdIDRespData `json:"data"`
+	return &resp, err
 }
 
 type GetAwemeByAdIDRespData struct {

@@ -7,6 +7,7 @@ import (
 
 type DeliverySetting struct {
 	AdID               int64
+	AdvertiserID       int64
 	Budget             float64
 	BudgetMode         ttypes.BudgetMode
 	DeepBidType        ttypes.DeepBidType

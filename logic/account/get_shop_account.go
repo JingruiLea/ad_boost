@@ -10,7 +10,11 @@ import (
 
 func GetShopAccount(ctx context.Context, at string) (accounts []*Account, err error) {
 	var resp GetAccountResp
-	err = httpclient.NewClient().Get(ctx, fmt.Sprintf("https://ad.oceanengine.com/open_api/oauth2/advertiser/get/?access_token=%s", at), httpclient.CommonHeader, &resp)
+	err = httpclient.NewClient().Get(ctx, fmt.Sprintf("https://ad.oceanengine.com/open_api/oauth2/advertiser/get/?access_token=%s", at),
+		map[string]string{
+			"Content-Type": "application/json",
+		},
+		&resp)
 	if err != nil {
 		logs.CtxErrorf(ctx, "GetShopAccount httpclient.NewClient().Get error: %v", err)
 		return nil, err

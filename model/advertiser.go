@@ -7,6 +7,7 @@ import (
 
 type Advertiser struct {
 	AdvertiserID            int64     `gorm:"unique;notNull" json:"advertiser_id"`
+	ShopID                  int64     `json:"shop_id"`
 	Name                    string    `json:"name"`
 	Company                 string    `json:"company"`
 	Address                 string    `json:"address"`

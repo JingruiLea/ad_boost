@@ -12,14 +12,14 @@ import (
 )
 
 func GetAudiencePackageList(ctx context.Context, req *GetAudiencePackageListReq) (*GetAudiencePackageListRespData, error) {
-	var resp GetAudiencePackageListResp
-	err := httpclient.NewClient().Get(ctx, "https://api.oceanengine.com/open_api/v1.0/qianchuan/orientation_package/get/", httpclient.CommonHeader, &resp, utils.Obj2Map(req))
+	var resp GetAudiencePackageListRespData
+	err := httpclient.NewClient().AdGet(ctx, req.AdvertiserID, "https://api.oceanengine.com/open_api/v1.0/qianchuan/orientation_package/get/", &resp, utils.Obj2Map(req))
 	if err != nil {
 		logs.CtxErrorf(ctx, "GetAudiencePackageList httpclient.NewClient().Get error: %v", err)
 		return nil, err
 	}
 	fmt.Printf("GetAudiencePackageList respMap: %s", utils.GetJsonStr(resp))
-	return resp.Data, nil
+	return &resp, nil
 }
 
 type GetAudiencePackageListReq struct {

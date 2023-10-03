@@ -15,7 +15,7 @@ func GetActionCategory(ctx context.Context, adID int64) error {
 		"action_days":   180,
 	}
 	var resp = make(map[string]interface{})
-	err := httpclient.NewClient().Get(ctx, "https://ad.oceanengine.com/open_api/2/tools/interest_action/action/category/", httpclient.CommonHeader, &resp, params)
+	err := httpclient.NewClient().Get(ctx, "https://ad.oceanengine.com/open_api/2/tools/interest_action/action/category/", &resp, params)
 	if err != nil {
 		logs.CtxErrorf(ctx, "GetCategoryList httpclient.NewClient().Get error: %v", err)
 		return err

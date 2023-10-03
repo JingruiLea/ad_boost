@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"github.com/JingruiLea/ad_boost/common/logs"
 	"github.com/JingruiLea/ad_boost/model"
-	"github.com/JingruiLea/ad_boost/model/ttypes"
 	"github.com/JingruiLea/ad_boost/utils"
 	"github.com/JingruiLea/ad_boost/utils/httpclient"
 	"time"
@@ -15,20 +14,17 @@ func MGetAdInfoDetail(ctx context.Context, adIDs []int64) ([]*AdAccount, error) 
 	params := map[string]interface{}{
 		"advertiser_ids": adIDs,
 	}
-	var resp GetAdInfoDetailResp
-	err := httpclient.NewClient().Get(ctx, "https://ad.oceanengine.com/open_api/2/advertiser/info/", httpclient.CommonHeader, &resp, params)
+	var resp GetAdInfoDetailRespData
+	err := httpclient.NewClient().AdGet(ctx, adIDs[0], "https://ad.oceanengine.com/open_api/2/advertiser/info/", &resp, params)
 	if err != nil {
 		logs.CtxErrorf(ctx, "GetAdAccount httpclient.NewClient().Get error: %v", err)
 		return nil, err
 	}
 	fmt.Printf("GetAdAccount respMap: %s", utils.GetJsonStr(resp))
-	return resp.Data, nil
+	return resp, nil
 }
 
-type GetAdInfoDetailResp struct {
-	ttypes.BaseResp
-	Data []*AdAccount `json:"data"`
-}
+type GetAdInfoDetailRespData []*AdAccount
 
 type AdAccount struct {
 	Address                 *string `json:"address"`

@@ -2,8 +2,15 @@ package sync
 
 import (
 	"context"
+	"github.com/JingruiLea/ad_boost/dal"
+	"github.com/JingruiLea/ad_boost/dal/redis_dal"
 	"testing"
 )
+
+func init() {
+	dal.Init()
+	redis_dal.Init()
+}
 
 func TestSyncAds(t *testing.T) {
 	type args struct {

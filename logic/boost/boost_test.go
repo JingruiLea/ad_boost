@@ -5,13 +5,12 @@ import (
 	"testing"
 )
 
-func TestBoost(t *testing.T) {
+func TestBoostInit(t *testing.T) {
 	type args struct {
-		ctx     context.Context
-		adID    int64
-		awemeID int64
+		ctx       context.Context
+		accountID int64
 	}
-	tests := []struct {
+	var tests = []struct {
 		name    string
 		args    args
 		wantErr bool
@@ -19,17 +18,16 @@ func TestBoost(t *testing.T) {
 		{
 			name: "",
 			args: args{
-				ctx:     context.Background(),
-				adID:    0,
-				awemeID: 0,
+				ctx:       context.Background(),
+				accountID: 1748031128935424,
 			},
 			wantErr: false,
 		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if err := Boost(tt.args.ctx, tt.args.adID, tt.args.awemeID, 1774203855472679); (err != nil) != tt.wantErr {
-				t.Errorf("Boost() error = %v, wantErr %v", err, tt.wantErr)
+			if err := BoostInit(tt.args.ctx, tt.args.accountID); (err != nil) != tt.wantErr {
+				t.Errorf("BoostInit() error = %v, wantErr %v", err, tt.wantErr)
 			}
 		})
 	}

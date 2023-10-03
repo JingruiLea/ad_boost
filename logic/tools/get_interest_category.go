@@ -13,7 +13,7 @@ func GetInterestCategory(ctx context.Context, adID int64) error {
 		"advertiser_id": 1748031128935424,
 	}
 	var resp = make(map[string]interface{})
-	err := httpclient.NewClient().Get(ctx, "https://ad.oceanengine.com/open_api/2/tools/interest_action/interest/category/", httpclient.CommonHeader, &resp, params)
+	err := httpclient.NewClient().Get(ctx, "https://ad.oceanengine.com/open_api/2/tools/interest_action/interest/category/", &resp, params)
 	if err != nil {
 		logs.CtxErrorf(ctx, "GetCategoryList httpclient.NewClient().Get error: %v", err)
 		return err

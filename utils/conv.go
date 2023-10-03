@@ -3,6 +3,7 @@ package utils
 import (
 	"encoding/json"
 	"fmt"
+	"math"
 	"strconv"
 )
 
@@ -40,4 +41,9 @@ func Obj2Map(v interface{}) map[string]interface{} {
 		fmt.Printf(err.Error())
 	}
 	return ret
+}
+
+func RoundFloat(val float64, places int) float64 {
+	shift := math.Pow(10, float64(places))
+	return math.Round(val*shift) / shift
 }

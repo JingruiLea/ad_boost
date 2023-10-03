@@ -25,7 +25,7 @@ const (
 
 func GetDMPPackageList(ctx context.Context, req *GetDMPPackageListReq) error {
 	var resp GetDMPPackageListResp
-	err := httpclient.NewClient().Get(ctx, "https://ad.oceanengine.com/open_api/v1.0/qianchuan/dmp/audiences/get/", httpclient.CommonHeader, &resp, utils.Obj2Map(req))
+	err := httpclient.NewClient().AdGet(ctx, req.AdvertiserId, "https://ad.oceanengine.com/open_api/v1.0/qianchuan/dmp/audiences/get/", &resp, utils.Obj2Map(req))
 	if err != nil {
 		logs.CtxErrorf(ctx, "GetDMPPackageList httpclient.NewClient().Get error: %v", err)
 		return err

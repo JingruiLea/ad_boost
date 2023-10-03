@@ -3,15 +3,18 @@ package httpclient
 import (
 	"bytes"
 	"context"
-	"encoding/json"
+	"fmt"
 	"github.com/JingruiLea/ad_boost/common/logs"
+	"github.com/JingruiLea/ad_boost/logic/auth"
+	"github.com/JingruiLea/ad_boost/model/ttypes"
+	jsoniter "github.com/json-iterator/go"
 	"io/ioutil"
 	"net/http"
 )
 
 var CommonHeader = map[string]string{
 	"Content-Type": "application/json",
-	"Access-Token": "b7f1815041aa3835b1e8dcc4ede24e7a33cd103e",
+	"Access-Token": "5620509264844a715ca68f1aa04c956e8d90bda0",
 }
 
 type Client struct {
@@ -23,6 +26,61 @@ func NewClient() *Client {
 		httpClient: &http.Client{},
 	}
 }
+
+type AdResp struct {
+	ttypes.BaseResp
+	Data jsoniter.RawMessage `json:"data"`
+}
+
+func (c *Client) AdRequest(ctx context.Context, accountID int64, url string, request, response interface{}, method string, onRedo bool, params ...map[string]interface{}) error {
+	accessToken, err := auth.GetAccessToken(ctx, accountID)
+	if err != nil {
+		logs.CtxErrorf(ctx, "AdRequest auth.GetAccessToken error: %v", err)
+		return err
+	}
+
+	headers := make(map[string]string)
+	headers["Content-Type"] = "application/json"
+	headers["Access-Token"] = accessToken
+
+	var adResp AdResp
+
+	if method == "POST" {
+		err = c.Post(ctx, url, headers, request, &adResp)
+	} else if method == "GET" {
+		err = c.Get(ctx, url, headers, &adResp, params...)
+	}
+
+	if err != nil {
+		return err
+	}
+
+	if adResp.Code > 40100 && adResp.Code < 40200 { //Access-Token过期
+		if onRedo {
+			return fmt.Errorf("AdRequest Access-Token过期, 重试失败, RequestID:%s", adResp.RequestID)
+		}
+		logs.CtxInfof(ctx, "AdRequest Access-Token过期, 尝试刷新.")
+		auth.RefreshTokenByAccountID(ctx, accountID)
+		return c.AdRequest(ctx, accountID, url, request, response, method, true, params...)
+	}
+
+	if adResp.Code != 0 {
+		return fmt.Errorf("AdRequest adResp.Code %d, Message: %s, RequestID:%s", adResp.Code, adResp.Message, adResp.RequestID)
+	}
+
+	decoder := jsoniter.NewDecoder(bytes.NewReader(adResp.Data))
+	decoder.UseNumber()
+	return decoder.Decode(&response)
+}
+
+func (c *Client) AdPost(ctx context.Context, accountID int64, url string, request, response interface{}) error {
+	return c.AdRequest(ctx, accountID, url, request, response, "POST", false)
+}
+
+func (c *Client) AdGet(ctx context.Context, accountID int64, url string, response interface{}, params ...map[string]interface{}) error {
+	return c.AdRequest(ctx, accountID, url, nil, response, "GET", false, params...)
+}
+
 func (c *Client) Get(ctx context.Context, url string, headers map[string]string, response interface{}, params ...map[string]interface{}) error {
 	req, err := http.NewRequest("GET", url, nil)
 	if err != nil {
@@ -59,15 +117,16 @@ func (c *Client) Get(ctx context.Context, url string, headers map[string]string,
 		return err
 	}
 
-	logs.CtxDebugf(ctx, "Response code: %d", resp.StatusCode)
-
-	return json.Unmarshal(body, &response)
+	logs.CtxDebugf(ctx, "Response code: %d, body: %s", resp.StatusCode, string(body))
+	decoder := jsoniter.NewDecoder(bytes.NewReader(body))
+	decoder.UseNumber()
+	return decoder.Decode(&response)
 }
 
 func (c *Client) Post(ctx context.Context, url string, headers map[string]string, request, response interface{}) error {
-	jsonReq, err := json.Marshal(request)
+	jsonReq, err := jsoniter.Marshal(request)
 	if err != nil {
-		logs.CtxErrorf(ctx, "Post json.Marshal error: %v", err)
+		logs.CtxErrorf(ctx, "Post decoder.Marshal error: %v", err)
 		return err
 	}
 
@@ -97,7 +156,9 @@ func (c *Client) Post(ctx context.Context, url string, headers map[string]string
 
 	logs.CtxDebugf(ctx, "Response code: %d", resp.StatusCode)
 
-	return json.Unmarshal(body, &response)
+	decoder := jsoniter.NewDecoder(bytes.NewReader(body))
+	decoder.UseNumber()
+	return decoder.Decode(&response)
 }
 
 func convertToString(v interface{}) string {
@@ -105,7 +166,7 @@ func convertToString(v interface{}) string {
 	case string:
 		return value
 	default:
-		jsonValue, _ := json.Marshal(value)
+		jsonValue, _ := jsoniter.Marshal(value)
 		return string(jsonValue)
 	}
 }

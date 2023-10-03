@@ -2,8 +2,8 @@ package ad_report
 
 import (
 	"context"
-	"fmt"
 	"github.com/JingruiLea/ad_boost/common/logs"
+	"github.com/JingruiLea/ad_boost/model"
 	"github.com/JingruiLea/ad_boost/model/ttypes"
 	"github.com/JingruiLea/ad_boost/utils"
 	"github.com/JingruiLea/ad_boost/utils/httpclient"
@@ -11,25 +11,20 @@ import (
 )
 
 func MGetAdReport(ctx context.Context, req *MGetAdReportReq) (*MGetAdReportRespData, error) {
-	var resp MGetAdReportResp
-	err := httpclient.NewClient().Get(ctx, "https://ad.oceanengine.com/open_api/v1.0/qianchuan/report/ad/get/", httpclient.CommonHeader, &resp, utils.Obj2Map(req))
+	var resp MGetAdReportRespData
+	err := httpclient.NewClient().AdGet(ctx, req.AdvertiserID, "https://ad.oceanengine.com/open_api/v1.0/qianchuan/report/ad/get/", &resp, utils.Obj2Map(req))
 	if err != nil {
-		logs.CtxErrorf(ctx, "UpdateAdBudget httpclient.NewClient().Post error: %v", err)
+		logs.CtxErrorf(ctx, "MGetAdReport httpclient.NewClient().Post error: %v", err)
 		return nil, err
 	}
-	fmt.Printf("UpdateAdBudget respMap: %s", utils.GetJsonStr(resp))
-	if resp.Code != 0 {
-		logs.CtxErrorf(ctx, "UpdateAdBudget resp.Code error: %d", resp.Code)
-		return nil, fmt.Errorf("UpdateAdBudget resp.Code error: %d", resp.Code)
-	}
-	return resp.Data, nil
+	return &resp, nil
 }
 
 func MGetCommonAdReport(ctx context.Context, advertiserID int64, adIDs []int64) ([]*AdReport, error) {
 	req := &MGetAdReportReq{
 		AdvertiserID: advertiserID,
-		StartDate:    "2023-08-16",
-		EndDate:      "2023-08-17",
+		StartDate:    time.Now().Format("2006-01-02"),
+		EndDate:      time.Now().Format("2006-01-02"),
 		Fields:       MGetAdReportFieldAllOrderCreateRoi7Days.Common(),
 		Filtering: &MGetAdReportFiltering{
 			MarketingGoal: ttypes.MarketingGoalLivePromGoods,
@@ -49,17 +44,26 @@ func MGetCommonAdReport(ctx context.Context, advertiserID int64, adIDs []int64) 
 }
 
 type MGetAdReportReq struct {
-	AdvertiserID    int64                  `json:"advertiser_id,omitempty"`    // 广告主id
-	StartDate       string                 `json:"start_date,omitempty"`       // 开始时间，格式 2021-04-05
-	EndDate         string                 `json:"end_date,omitempty"`         // 结束时间，格式 2021-04-05
-	TimeGranularity string                 `json:"time_granularity,omitempty"` // 时间粒度
-	Fields          []MGetAdReportField    `json:"fields,omitempty"`           // 需要查询的消耗指标
-	Filtering       *MGetAdReportFiltering `json:"filtering,omitempty"`        // 过滤条件
-	Page            int                    `json:"page,omitempty"`             // 页码
-	PageSize        int                    `json:"page_size,omitempty"`        // 页面大小
-	OrderField      string                 `json:"order_field,omitempty"`      // 排序字段
-	OrderType       string                 `json:"order_type,omitempty"`       // 排序方式
+	AdvertiserID    int64                       `json:"advertiser_id,omitempty"`    // 广告主id
+	StartDate       string                      `json:"start_date,omitempty"`       // 开始时间，格式 2021-04-05
+	EndDate         string                      `json:"end_date,omitempty"`         // 结束时间，格式 2021-04-05
+	TimeGranularity MGetAdReportTimeGranularity `json:"time_granularity,omitempty"` // 时间粒度
+	Fields          []MGetAdReportField         `json:"fields,omitempty"`           // 需要查询的消耗指标
+	Filtering       *MGetAdReportFiltering      `json:"filtering,omitempty"`        // 过滤条件
+	Page            int                         `json:"page,omitempty"`             // 页码
+	PageSize        int                         `json:"page_size,omitempty"`        // 页面大小
+	OrderField      string                      `json:"order_field,omitempty"`      // 排序字段
+	OrderType       string                      `json:"order_type,omitempty"`       // 排序方式
 }
+
+type MGetAdReportTimeGranularity string
+
+const (
+	//TIME_GRANULARITY_DAILY 按天
+	MGetAdReportTimeGranularityDaily MGetAdReportTimeGranularity = "TIME_GRANULARITY_DAILY"
+	//TIME_GRANULARITY_HOURLY 按小时
+	MGetAdReportTimeGranularityHourly MGetAdReportTimeGranularity = "TIME_GRANULARITY_HOURLY"
+)
 
 type MGetAdReportFiltering struct {
 	AdIds          []int64               `json:"ad_ids,omitempty"`          // 广告计划id列表，最多支持100个
@@ -265,4 +269,26 @@ type AdReport struct {
 	PrepayAndPayOrderRoi float64 `json:"prepay_and_pay_order_roi"` // 直接支付roi
 	ShowCnt              int     `json:"show_cnt"`                 // 展示次数
 	StatCost             float64 `json:"stat_cost"`                // 消耗
+}
+
+func (a *AdReport) ToModel(cpa, roi float64) *model.AdReportItem {
+	ret := &model.AdReportItem{
+		AdID:                 a.AdID,
+		AdvertiserId:         a.AdvertiserId,
+		ClickCnt:             a.ClickCnt,
+		ConvertCnt:           a.ConvertCnt,
+		ConvertCost:          a.ConvertCost,
+		ConvertRate:          a.ConvertRate,
+		CpmPlatform:          a.CpmPlatform,
+		Ctr:                  a.Ctr,
+		DyFollow:             a.DyFollow,
+		PayOrderAmount:       a.PayOrderAmount,
+		PayOrderCount:        a.PayOrderCount,
+		PrepayAndPayOrderRoi: a.PrepayAndPayOrderRoi,
+		ShowCnt:              a.ShowCnt,
+		StatCost:             a.StatCost,
+		CpaBid:               cpa,
+		RoiGoal:              roi,
+	}
+	return ret
 }

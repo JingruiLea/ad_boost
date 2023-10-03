@@ -15,7 +15,7 @@ func GetIndustry(ctx context.Context, adID int64, level int) error {
 		"type":          "ADVERTISER",
 	}
 	var resp = make(map[string]interface{})
-	err := httpclient.NewClient().Get(ctx, "https://ad.oceanengine.com/open_api/2/tools/industry/get/", httpclient.CommonHeader, &resp, params)
+	err := httpclient.NewClient().AdGet(ctx, adID, "https://ad.oceanengine.com/open_api/2/tools/industry/get/", &resp, params)
 	if err != nil {
 		logs.CtxErrorf(ctx, "GetAdAccount httpclient.NewClient().Get error: %v", err)
 		return err

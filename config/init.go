@@ -36,7 +36,6 @@ func init() {
 		_ = godotenv.Overload("/Users/ljr/go/src/github.com/JingruiLea/ad_boost/.env")
 	}
 
-	fmt.Println(os.Environ())
 	Configs = &Config{}
 	Configs.RedisHost = os.Getenv("REDIS_HOST")
 	if Configs.RedisHost == "" {

@@ -16,7 +16,7 @@ func GetCategoryTopTalent(ctx context.Context, adID int64, categoryID int64) err
 		"behaviors":     ttypes.AwemeFanBehaviorsCommentedUser.Common(),
 	}
 	var resp = make(map[string]interface{})
-	err := httpclient.NewClient().Get(ctx, "https://ad.oceanengine.com/open_api/2/tools/aweme_category_top_author/get/", httpclient.CommonHeader, &resp, params)
+	err := httpclient.NewClient().Get(ctx, "https://ad.oceanengine.com/open_api/2/tools/aweme_category_top_author/get/", &resp, params)
 	if err != nil {
 		logs.CtxErrorf(ctx, "GetAdAccount httpclient.NewClient().Get error: %v", err)
 		return err

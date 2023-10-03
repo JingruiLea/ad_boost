@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"github.com/JingruiLea/ad_boost/common/logs"
+	"github.com/JingruiLea/ad_boost/dal/shop_dal"
 	"github.com/JingruiLea/ad_boost/model/ttypes"
 	"github.com/JingruiLea/ad_boost/utils"
 	"github.com/JingruiLea/ad_boost/utils/httpclient"
@@ -11,7 +12,15 @@ import (
 
 func GetAdAccountByShopID(ctx context.Context, shopID int64) (data []int64, err error) {
 	var resp GetAdAccountByShopIDResp
-	err = httpclient.NewClient().Get(ctx, fmt.Sprintf("https://ad.oceanengine.com/open_api/v1.0/qianchuan/shop/advertiser/list/?shop_id=%d", shopID), httpclient.CommonHeader, &resp)
+	shop, err := shop_dal.GetShopByShopID(ctx, shopID)
+	if err != nil {
+		logs.CtxErrorf(ctx, "GetAdAccountByShopID shop_dal.GetShopByShopID error: %v", err)
+		return nil, err
+	}
+	err = httpclient.NewClient().Get(ctx, fmt.Sprintf("https://ad.oceanengine.com/open_api/v1.0/qianchuan/shop/advertiser/list/?shop_id=%d", shopID), map[string]string{
+		"Access-Token": shop.AccessToken,
+		"Content-Type": "application/json",
+	}, &resp)
 	if err != nil {
 		logs.CtxErrorf(ctx, "GetAdAccountByShopID httpclient.NewClient().Get error: %v", err)
 		return nil, err

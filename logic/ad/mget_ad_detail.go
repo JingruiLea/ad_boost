@@ -9,19 +9,13 @@ import (
 )
 
 func GetAdDetail(ctx context.Context, advertiserID, adID int64) error {
-	//   "list": [
-	//      1748031128935424,
-	//      1748031128935424,
-	//      1767935594672136,
-	//      1769126587284494
-	//    ],
 	var req = map[string]interface{}{
 		"advertiser_id": advertiserID,
 		"ad_id":         adID,
 	}
 
 	var resp = make(map[string]interface{})
-	err := httpclient.NewClient().Get(ctx, "https://ad.oceanengine.com/open_api/v1.0/qianchuan/ad/detail/get/", httpclient.CommonHeader, &resp, req)
+	err := httpclient.NewClient().AdGet(ctx, advertiserID, "https://ad.oceanengine.com/open_api/v1.0/qianchuan/ad/detail/get/", &resp, req)
 	if err != nil {
 		logs.CtxErrorf(ctx, "GetAdAccount httpclient.NewClient().Get error: %v", err)
 		return err

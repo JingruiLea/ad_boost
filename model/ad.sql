@@ -11,6 +11,7 @@ CREATE TABLE ad (
     name VARCHAR(255) NOT NULL DEFAULT '' COMMENT '名称',
     opt_status VARCHAR(255) NOT NULL DEFAULT '' COMMENT '优化状态',
     status VARCHAR(255) NOT NULL DEFAULT '' COMMENT '状态',
+    advertiser_id BIGINT NOT NULL DEFAULT 0 COMMENT '广告主ID',
 
     created_at DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3) COMMENT '创建时间',
     updated_at DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3) ON UPDATE CURRENT_TIMESTAMP(3) COMMENT '更新时间',
@@ -18,3 +19,7 @@ CREATE TABLE ad (
 
     UNIQUE KEY (ad_id)
 ) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COMMENT '广告信息';
+
+# add column advertiser_id
+ALTER TABLE ad ADD COLUMN advertiser_id BIGINT NOT NULL DEFAULT 0 COMMENT '广告主ID';
+ALTER TABLE ad ADD INDEX idx_advertiser_id (advertiser_id);

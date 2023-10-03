@@ -21,15 +21,13 @@ func CreateOrUpdateAdAccount(ctx context.Context, adAccount *model.Advertiser) (
 	return nil
 }
 
-func CreateOrUpdateAweme(ctx context.Context, aweme *model.Aweme) (err error) {
+func GetAdAccountByAccountID(ctx context.Context, accountID int64) (*model.Advertiser, error) {
 	db := dal.GetDB(ctx)
-	err = db.Clauses(clause.OnConflict{
-		Columns:   []clause.Column{{Name: "aweme_id"}},
-		UpdateAll: true,
-	}).Create(&aweme).Error
+	var adAccount model.Advertiser
+	err := db.Where("advertiser_id = ?", accountID).First(&adAccount).Error
 	if err != nil {
-		logs.CtxErrorf(ctx, "CreateOrUpdateAweme db.Create error: %v", err)
-		return err
+		logs.CtxErrorf(ctx, "GetAdAccountByAccountID db.Where error: %v", err)
+		return nil, err
 	}
-	return nil
+	return &adAccount, nil
 }

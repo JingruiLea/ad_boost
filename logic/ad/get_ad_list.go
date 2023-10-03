@@ -2,7 +2,6 @@ package ad
 
 import (
 	"context"
-	"fmt"
 	"github.com/JingruiLea/ad_boost/common/logs"
 	"github.com/JingruiLea/ad_boost/model"
 	"github.com/JingruiLea/ad_boost/model/ttypes"
@@ -10,17 +9,35 @@ import (
 	"github.com/JingruiLea/ad_boost/utils/httpclient"
 )
 
-func GetAdList(ctx context.Context, req *GetAdListReq) (*GetAdListRespData, error) {
-	var resp GetAdListResp
-	err := httpclient.NewClient().Get(ctx, "https://ad.oceanengine.com/open_api/v1.0/qianchuan/ad/get/", httpclient.CommonHeader, &resp, utils.Obj2Map(req))
+func GetAdListByStatus(ctx context.Context, accountID int64, status ttypes.AdStatus) ([]*model.Ad, error) {
+	resp, err := GetAdList(ctx, &GetAdListReq{
+		AdvertiserId: accountID,
+		Filtering: &Filter{
+			MarketingGoal: ttypes.MarketingGoalLivePromGoods,
+			Status:        status,
+		},
+		Page:     1,
+		PageSize: 100,
+	})
 	if err != nil {
-		logs.CtxErrorf(ctx, "GetAdList httpclient.NewClient().Get error: %v", err)
+		logs.CtxErrorf(ctx, "GetAdListByStauts GetAdList error: %v", err)
 		return nil, err
 	}
-	if resp.Code != 0 || resp.Data == nil {
-		return nil, fmt.Errorf("GetAdList resp.Code != 0 || resp.Data == nil")
+	var ret []*model.Ad
+	for _, ad := range resp.List {
+		ret = append(ret, ad.ToModel())
 	}
-	return resp.Data, nil
+	return ret, nil
+}
+
+func GetAdList(ctx context.Context, req *GetAdListReq) (*GetAdListRespData, error) {
+	var resp GetAdListRespData
+	err := httpclient.NewClient().AdGet(ctx, req.AdvertiserId, "https://ad.oceanengine.com/open_api/v1.0/qianchuan/ad/get/", &resp, utils.Obj2Map(req))
+	if err != nil {
+		logs.CtxErrorf(ctx, "GetAdList httpclient.NewClient().AdGet error: %v", err)
+		return nil, err
+	}
+	return &resp, nil
 }
 
 type GetAdListReq struct {
@@ -32,9 +49,9 @@ type GetAdListReq struct {
 }
 
 type Filter struct {
-	Ids               []int                 `json:"ids,omitempty"`
+	IDs               []int64               `json:"ids,omitempty"`
 	AdName            string                `json:"ad_name,omitempty"`
-	Status            AdStatus              `json:"status,omitempty"`
+	Status            ttypes.AdStatus       `json:"status,omitempty"`
 	CampaignScene     []CampaignSceneFilter `json:"campaign_scene,omitempty"`
 	MarketingGoal     ttypes.MarketingGoal  `json:"marketing_goal"`
 	MarketingScene    MarketingSceneFilter  `json:"marketing_scene,omitempty"`
@@ -45,39 +62,6 @@ type Filter struct {
 	AwemeId           int                   `json:"aweme_id,omitempty"`
 	AutoManageFilter  AutoManageFilter      `json:"auto_manage_filter,omitempty"`
 }
-
-type AdStatus string
-
-const (
-	AdStatusDeliveryOk              AdStatus = "DELIVERY_OK"
-	AdStatusAudit                   AdStatus = "AUDIT"
-	AdStatusReaudit                 AdStatus = "REAUDIT"
-	AdStatusDelete                  AdStatus = "DELETE"
-	AdStatusDisable                 AdStatus = "DISABLE"
-	AdStatusDraft                   AdStatus = "DRAFT"
-	AdStatusTimeNoReach             AdStatus = "TIME_NO_REACH"
-	AdStatusTimeDone                AdStatus = "TIME_DONE"
-	AdStatusNoSchedule              AdStatus = "NO_SCHEDULE"
-	AdStatusCreate                  AdStatus = "CREATE"
-	AdStatusOfflineAudit            AdStatus = "OFFLINE_AUDIT"
-	AdStatusOfflineBudget           AdStatus = "OFFLINE_BUDGET"
-	AdStatusOfflineBalance          AdStatus = "OFFLINE_BALANCE"
-	AdStatusPreOfflineBudget        AdStatus = "PRE_OFFLINE_BUDGET"
-	AdStatusPreOnline               AdStatus = "PRE_ONLINE"
-	AdStatusFrozen                  AdStatus = "FROZEN"
-	AdStatusError                   AdStatus = "ERROR"
-	AdStatusAuditStatusError        AdStatus = "AUDIT_STATUS_ERROR"
-	AdStatusAdvertiserOfflineBudget AdStatus = "ADVERTISER_OFFLINE_BUDGET"
-	AdStatusAdvertiserPreOffline    AdStatus = "ADVERTISER_PRE_OFFLINE_BUDGET"
-	AdStatusExternalUrlDisable      AdStatus = "EXTERNAL_URL_DISABLE"
-	AdStatusLiveRoomOff             AdStatus = "LIVE_ROOM_OFF"
-	AdStatusCampaignDisable         AdStatus = "CAMPAIGN_DISABLE"
-	AdStatusCampaignOfflineBudget   AdStatus = "CAMPAIGN_OFFLINE_BUDGET"
-	AdStatusCampaignPreOffline      AdStatus = "CAMPAIGN_PREOFFLINE_BUDGET"
-	AdStatusSystemDisable           AdStatus = "SYSTEM_DISABLE"
-	AdStatusQuotaDisable            AdStatus = "QUOTA_DISABLE"
-	AdStatusRoi2Disable             AdStatus = "ROI2_DISABLE"
-)
 
 // 定义枚举类型
 type AwemeInfo int
@@ -117,26 +101,21 @@ type GetAdListRespData struct {
 	PageInfo *ttypes.PageInfo `json:"page_info"`
 }
 
-type GetAdListResp struct {
-	ttypes.BaseResp
-	Data *GetAdListRespData `json:"data"`
-}
-
 type Ad struct {
-	AdCreateTime    string           `json:"ad_create_time"`
-	AdID            int64            `json:"ad_id"`
-	AdModifyTime    string           `json:"ad_modify_time"`
-	AwemeInfo       []interface{}    `json:"aweme_info"`
-	CampaignId      int64            `json:"campaign_id"`
-	CampaignScene   string           `json:"campaign_scene"`
-	DeliverySetting *DeliverySetting `json:"delivery_setting"`
-	LabAdType       string           `json:"lab_ad_type"`
-	MarketingGoal   string           `json:"marketing_goal"`
-	MarketingScene  string           `json:"marketing_scene"`
-	Name            string           `json:"name"`
-	OptStatus       string           `json:"opt_status"`
-	ProductInfo     []interface{}    `json:"product_info"`
-	Status          string           `json:"status"`
+	AdCreateTime    string                `json:"ad_create_time"`
+	AdID            int64                 `json:"ad_id"`
+	AdModifyTime    string                `json:"ad_modify_time"`
+	AwemeInfo       []interface{}         `json:"aweme_info"`
+	CampaignId      int64                 `json:"campaign_id"`
+	CampaignScene   string                `json:"campaign_scene"`
+	DeliverySetting *DeliverySetting      `json:"delivery_setting"`
+	LabAdType       ttypes.LabAdType      `json:"lab_ad_type"`
+	MarketingGoal   ttypes.MarketingGoal  `json:"marketing_goal"`
+	MarketingScene  ttypes.MarketingScene `json:"marketing_scene"`
+	Name            string                `json:"name"`
+	OptStatus       ttypes.OptStatus      `json:"opt_status"`
+	ProductInfo     []interface{}         `json:"product_info"`
+	Status          ttypes.AdStatus       `json:"status"`
 }
 
 func (a *Ad) ToModel() *model.Ad {

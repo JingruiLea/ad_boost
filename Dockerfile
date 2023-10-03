@@ -11,6 +11,8 @@ RUN ./build.sh
 FROM --platform=linux/amd64 registry.ap-southeast-1.aliyuncs.com/taimer/alpine:3.18
 COPY --from=builder /go/src/github.com/JingruiLea/ad_boost/output /opt/output
 
+RUN apk add --no-cache tzdata
+
 ENV LANG zh_CN.UTF-8
 ENV TZ=Asia/Shanghai
 RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone

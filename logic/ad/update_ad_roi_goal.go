@@ -9,18 +9,29 @@ import (
 	"github.com/JingruiLea/ad_boost/utils/httpclient"
 )
 
+func MUpdateAdRoiGoals(ctx context.Context, advertiserID int64, goals []*RoiGoal) error {
+	var err error
+	for _, goal := range goals {
+		err = UpdateAdRoiGoal(ctx, advertiserID, []*RoiGoal{goal})
+		if err != nil {
+			logs.CtxErrorf(ctx, "MUpdateAdRoiGoals UpdateAdRoiGoal error: %v", err)
+			return err
+		}
+	}
+	return nil
+}
+
 func UpdateAdRoiGoal(ctx context.Context, advertiserID int64, goals []*RoiGoal) error {
 	var req UpdateAdRoiGoalReq
 	req.AdvertiserId = advertiserID
 	req.RoiGoalUpdates = goals
 	var resp = make(map[string]interface{})
-	err := httpclient.NewClient().Post(ctx, "https://ad.oceanengine.com/open_api/v1.0/qianchuan/roi/goal/update", httpclient.CommonHeader, req, &resp)
+	err := httpclient.NewClient().AdPost(ctx, advertiserID, "https://ad.oceanengine.com/open_api/v1.0/qianchuan/roi/goal/update", req, &resp)
 	if err != nil {
 		logs.CtxErrorf(ctx, "UpdateAdRoiGoal httpclient.NewClient().Post error: %v", err)
 		return err
 	}
 	fmt.Printf("UpdateAdRoiGoal respMap: %s", utils.GetJsonStr(resp))
-	//TODO Account
 	return nil
 }
 

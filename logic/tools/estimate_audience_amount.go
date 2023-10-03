@@ -13,7 +13,7 @@ func EstimateAudienceAmount(ctx context.Context, adID int64, ad *ttypes.Ad) erro
 	req := &EstimateAudienceAmountReq{}
 	req = req.FromAd(ad)
 	var resp = make(map[string]interface{})
-	err := httpclient.NewClient().Get(ctx, "https://api.oceanengine.com/open_api/v1.0/qianchuan/tools/estimate_audience/", httpclient.CommonHeader, &resp, utils.Obj2Map(req))
+	err := httpclient.NewClient().Get(ctx, "https://api.oceanengine.com/open_api/v1.0/qianchuan/tools/estimate_audience/", &resp, utils.Obj2Map(req))
 	if err != nil {
 		logs.CtxErrorf(ctx, "EstimateAudienceAmount httpclient.NewClient().Get error: %v", err)
 		return err

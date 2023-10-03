@@ -1,6 +1,7 @@
 package logs
 
 import (
+	"github.com/JingruiLea/ad_boost/common/envs"
 	"github.com/JingruiLea/ad_boost/config"
 	"io"
 	"os"
@@ -23,9 +24,15 @@ func init() {
 		rotatelogs.WithMaxAge(time.Duration(180)*time.Hour*24),
 		rotatelogs.WithRotationTime(time.Duration(60)*time.Minute),
 	)
-	mw := io.MultiWriter(os.Stdout, writer)
-	log.SetOutput(mw)
-	log.SetLevel(logrus.InfoLevel)
+	if !envs.IsDev() {
+		mw := io.MultiWriter(os.Stdout, writer)
+		log.SetOutput(mw)
+	}
+	if envs.IsDev() {
+		log.SetLevel(logrus.DebugLevel)
+	} else {
+		log.SetLevel(logrus.DebugLevel)
+	}
 	log.AddHook(&truncateHook{})
 }
 

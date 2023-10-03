@@ -13,6 +13,7 @@ CREATE TABLE delivery_setting (
       smart_bid_type VARCHAR(255) NOT NULL DEFAULT '' COMMENT '智能出价类型',
       start_time VARCHAR(255) NOT NULL DEFAULT '' COMMENT '开始时间',
       cpa_bid DECIMAL(10,2)  DEFAULT NULL COMMENT 'CPA出价',
+      advertiser_id BIGINT NOT NULL DEFAULT 0 COMMENT '广告主ID',
 
       created_at DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3) COMMENT '创建时间',
       updated_at DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3) ON UPDATE CURRENT_TIMESTAMP(3) COMMENT '更新时间',
@@ -20,3 +21,6 @@ CREATE TABLE delivery_setting (
 
       UNIQUE KEY (ad_id)
 ) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COMMENT '投放设置';
+
+#增加广告主id列
+ALTER TABLE delivery_setting ADD COLUMN advertiser_id BIGINT NOT NULL DEFAULT 0 COMMENT '广告主ID';

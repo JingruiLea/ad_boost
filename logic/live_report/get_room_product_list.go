@@ -10,7 +10,7 @@ import (
 
 func GetRoomProductList(ctx context.Context, req *GetRoomProductListReq) error {
 	var resp = make(map[string]interface{})
-	err := httpclient.NewClient().Get(ctx, "https://api.oceanengine.com/open_api/v1.0/qianchuan/today_live/room/product_list/get/", httpclient.CommonHeader, &resp, utils.Obj2Map(req))
+	err := httpclient.NewClient().AdGet(ctx, req.AdvertiserID, "https://api.oceanengine.com/open_api/v1.0/qianchuan/today_live/room/product_list/get/", &resp, utils.Obj2Map(req))
 	if err != nil {
 		logs.CtxErrorf(ctx, "GetReport httpclient.NewClient().Get error: %v", err)
 		return err

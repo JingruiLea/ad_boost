@@ -2,7 +2,6 @@ package ad_group
 
 import (
 	"context"
-	"fmt"
 	"github.com/JingruiLea/ad_boost/common/logs"
 	"github.com/JingruiLea/ad_boost/model"
 	"github.com/JingruiLea/ad_boost/model/ttypes"
@@ -16,18 +15,14 @@ func GetAdGroupList(ctx context.Context, req *GetAdGroupListReq) (*GetAdGroupLis
 	req.AdvertiserID = 1748031128935424
 	req.Filter.MarketingGoal = ttypes.MarketingGoalLivePromGoods
 
-	var resp GetAdGroupListResp
-	err := httpclient.NewClient().Get(ctx, "https://ad.oceanengine.com/open_api/v1.0/qianchuan/campaign_list/get/", httpclient.CommonHeader, &resp, utils.Obj2Map(req))
+	var resp GetAdGroupListRespData
+	err := httpclient.NewClient().AdGet(ctx, req.AdvertiserID, "https://ad.oceanengine.com/open_api/v1.0/qianchuan/campaign_list/get/", &resp, utils.Obj2Map(req))
 	if err != nil {
 		logs.CtxErrorf(ctx, "GetAdGroupList httpclient.NewClient().Get error: %v", err)
 		return nil, err
 	}
-	fmt.Printf("GetAdGroupList respMap: %s", utils.GetJsonStr(resp))
-	if resp.Code != 0 || resp.Data == nil {
-		return nil, fmt.Errorf("GetAdGroupList resp.Code != 0 || resp.Data == nil")
-	}
 
-	return resp.Data, nil
+	return &resp, nil
 }
 
 type GetAdGroupListReq struct {
@@ -53,13 +48,6 @@ const (
 	AdGroupStatusDisable AdGroupStatus = "DISABLE"
 	AdGroupStatusDelete  AdGroupStatus = "DELETE"
 )
-
-type GetAdGroupListResp struct {
-	ttypes.BaseResp
-	Data    *GetAdGroupListRespData `json:"data"`
-	Code    int                     `json:"code"`
-	Message string                  `json:"message"`
-}
 
 type GetAdGroupListRespData struct {
 	List     []*Campaign      `json:"list"`

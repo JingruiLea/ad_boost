@@ -20,9 +20,6 @@ type GetSuggestBidReq struct {
 }
 
 func GetSuggestBid(ctx context.Context, ad *ttypes.Ad) (low, high float32, err error) {
-	//   "list": [
-	//      1748031128935424,
-	//    ],
 	var req GetSuggestBidReq
 	req.AdvertiserID = ad.AdvertiserID
 	req.AwemeID = ad.AwemeID
@@ -32,23 +29,18 @@ func GetSuggestBid(ctx context.Context, ad *ttypes.Ad) (low, high float32, err e
 	req.CampaignScene = ad.CampaignScene
 
 	mmm := utils.Obj2Map(req)
-	var resp SuggestBidResp
-	err = httpclient.NewClient().Get(ctx, "https://api.oceanengine.com/open_api/v1.0/qianchuan/suggest_bid/", httpclient.CommonHeader, &resp, mmm)
+	var resp SuggestBidRespData
+	err = httpclient.NewClient().AdGet(ctx, ad.AdvertiserID, "https://api.oceanengine.com/open_api/v1.0/qianchuan/suggest_bid/", &resp, mmm)
 	if err != nil {
 		logs.CtxErrorf(ctx, "GetAdAccount httpclient.NewClient().Get error: %v", err)
 		return 0, 0, err
 	}
 	fmt.Printf("GetAdAccount respMap: %s", utils.GetJsonStr(resp))
 	//单位为千分之一分, 要转化成元.
-	return float32(resp.SuggestBidData.SuggestBidLow) / 100000, float32(resp.SuggestBidData.SuggestBidHigh) / 100000, nil
+	return float32(resp.SuggestBidLow) / 100000, float32(resp.SuggestBidHigh) / 100000, nil
 }
 
-type SuggestBidResp struct {
-	ttypes.BaseResp
-	SuggestBidData SuggestBidData `json:"data"`
-}
-
-type SuggestBidData struct {
+type SuggestBidRespData struct {
 	SuggestBidHigh int `json:"suggest_bid_high"`
 	SuggestBidLow  int `json:"suggest_bid_low"`
 }

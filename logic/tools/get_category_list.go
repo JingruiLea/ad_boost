@@ -13,7 +13,7 @@ func GetCategoryList(ctx context.Context, adID int64) error {
 		"advertiser_id": 1748031128935424,
 	}
 	var resp = make(map[string]interface{})
-	err := httpclient.NewClient().Get(ctx, "https://ad.oceanengine.com/open_api/2/tools/aweme_multi_level_category/get/", httpclient.CommonHeader, &resp, params)
+	err := httpclient.NewClient().Get(ctx, "https://ad.oceanengine.com/open_api/2/tools/aweme_multi_level_category/get/", &resp, params)
 	if err != nil {
 		logs.CtxErrorf(ctx, "GetCategoryList httpclient.NewClient().Get error: %v", err)
 		return err

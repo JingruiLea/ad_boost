@@ -742,3 +742,45 @@ const (
 	// NewCustomerNone 不限
 	NewCustomerNone NewCustomer = "NONE"
 )
+
+type OptStatus string
+
+const (
+	OptStatusEnable  OptStatus = "ENABLE"
+	OptStatusDisable OptStatus = "DISABLE"
+	OptStatusDelete  OptStatus = "DELETE"
+	OptStatusRevive  OptStatus = "REVIVE"
+)
+
+type AdStatus string
+
+const (
+	AdStatusDeliveryOk              AdStatus = "DELIVERY_OK"
+	AdStatusAudit                   AdStatus = "AUDIT"
+	AdStatusReaudit                 AdStatus = "REAUDIT"
+	AdStatusDelete                  AdStatus = "DELETE"
+	AdStatusDisable                 AdStatus = "DISABLE"
+	AdStatusDraft                   AdStatus = "DRAFT"
+	AdStatusTimeNoReach             AdStatus = "TIME_NO_REACH"
+	AdStatusTimeDone                AdStatus = "TIME_DONE"
+	AdStatusNoSchedule              AdStatus = "NO_SCHEDULE"
+	AdStatusCreate                  AdStatus = "CREATE"
+	AdStatusOfflineAudit            AdStatus = "OFFLINE_AUDIT"
+	AdStatusOfflineBudget           AdStatus = "OFFLINE_BUDGET"
+	AdStatusOfflineBalance          AdStatus = "OFFLINE_BALANCE"
+	AdStatusPreOfflineBudget        AdStatus = "PRE_OFFLINE_BUDGET"
+	AdStatusPreOnline               AdStatus = "PRE_ONLINE"
+	AdStatusFrozen                  AdStatus = "FROZEN"
+	AdStatusError                   AdStatus = "ERROR"
+	AdStatusAuditStatusError        AdStatus = "AUDIT_STATUS_ERROR"
+	AdStatusAdvertiserOfflineBudget AdStatus = "ADVERTISER_OFFLINE_BUDGET"
+	AdStatusAdvertiserPreOffline    AdStatus = "ADVERTISER_PRE_OFFLINE_BUDGET"
+	AdStatusExternalUrlDisable      AdStatus = "EXTERNAL_URL_DISABLE"
+	AdStatusLiveRoomOff             AdStatus = "LIVE_ROOM_OFF"
+	AdStatusCampaignDisable         AdStatus = "CAMPAIGN_DISABLE"
+	AdStatusCampaignOfflineBudget   AdStatus = "CAMPAIGN_OFFLINE_BUDGET"
+	AdStatusCampaignPreOffline      AdStatus = "CAMPAIGN_PREOFFLINE_BUDGET"
+	AdStatusSystemDisable           AdStatus = "SYSTEM_DISABLE"
+	AdStatusQuotaDisable            AdStatus = "QUOTA_DISABLE"
+	AdStatusRoi2Disable             AdStatus = "ROI2_DISABLE"
+)
