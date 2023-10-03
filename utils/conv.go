@@ -19,6 +19,18 @@ func Str2I64(s string, defaultValue ...int64) int64 {
 	return ret
 }
 
+func Str2Float64(s string, defaultValue ...float64) float64 {
+	var ret float64
+	ret, err := strconv.ParseFloat(s, 64)
+	if err != nil {
+		if len(defaultValue) > 0 {
+			return defaultValue[0]
+		}
+		return 0
+	}
+	return ret
+}
+
 func GetJsonStr(v interface{}) string {
 	if v == nil {
 		return ""

@@ -68,6 +68,68 @@ func Init() {
 			return "boost report"
 		case strings.HasPrefix(msg, "boost report stop"):
 			AlarmOpen = false
+		case strings.HasPrefix(msg, "更新出价"):
+			//更新出价 ID 出价
+			//更新出价 123 0.5
+			adArr := strings.Split(msg, " ")
+			if len(adArr) != 3 {
+				return "更新出价失败,参数不对"
+			}
+			adID := utils.Str2I64(adArr[1])
+			if adID == 0 {
+				return "更新出价失败,参数不对"
+			}
+			bid := utils.Str2Float64(adArr[2])
+			if bid == 0 {
+				return "更新出价失败,参数不对"
+			}
+			err := ad.UpdateAdBid(context.Background(), 1748031128935424, []*ad.Bid{
+				{
+					AdId: adID,
+					Bid:  bid,
+				},
+			})
+			if err != nil {
+				return fmt.Sprintf("更新出价失败, err:%v", err)
+			}
+
+		case strings.HasPrefix(msg, "停止"):
+			//停止 ID
+			adArr := strings.Split(msg, " ")
+			if len(adArr) != 2 {
+				return "停止失败,参数不对"
+			}
+			adID := utils.Str2I64(adArr[1])
+			if adID == 0 {
+				return "停止失败,参数不对"
+			}
+			err := ad.UpdateAdStatus(context.Background(), &ad.UpdateAdStatusReq{
+				AdvertiserID: 1748031128935424,
+				AdIDs:        []int64{adID},
+				OptStatus:    ad.OptStatusDisable,
+			})
+			if err != nil {
+				return fmt.Sprintf("停止失败, err:%v", err)
+			}
+
+		case strings.HasPrefix(msg, "启动"):
+			//启动 ID
+			adArr := strings.Split(msg, " ")
+			if len(adArr) != 2 {
+				return "启动失败,参数不对"
+			}
+			adID := utils.Str2I64(adArr[1])
+			if adID == 0 {
+				return "启动失败,参数不对"
+			}
+			err := ad.UpdateAdStatus(context.Background(), &ad.UpdateAdStatusReq{
+				AdvertiserID: 1748031128935424,
+				AdIDs:        []int64{adID},
+				OptStatus:    ad.OptStatusEnable,
+			})
+			if err != nil {
+				return fmt.Sprintf("启动失败, err:%v", err)
+			}
 		}
 		return ""
 	})
@@ -279,10 +341,12 @@ func BoostLoop(ctx context.Context, accountID int64, startTimeStr string) {
 			totalRoi = utils.RoundFloat(totalPayAmount/totalCost, 2)
 			larkAndLog(ctx, "总消耗:%.2f, 总成交金额:%.2f, 总ROI:%.2f", totalCost, totalPayAmount, totalRoi)
 			avgCost := totalCost/float64(len(reports)) + 0.01
+			reportStr := ""
 			for _, report := range reports {
 				if report.StatCost > avgCost { //大于均值的是主要计划
 					larkAndLog(ctx, "主要计划:ID:%d, 消耗:%.2f, ROI:%.2f", report.AdID, report.StatCost, report.PrepayAndPayOrderRoi)
 				}
+				reportStr += fmt.Sprintf("计划ID:%d, 消耗:%.2f, ROI:%.2f, 成单:%d", report.AdID, report.StatCost, report.PrepayAndPayOrderRoi, report.PayOrderCount)
 			}
 
 			switch {
