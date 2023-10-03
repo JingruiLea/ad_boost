@@ -167,6 +167,7 @@ func BoostInit(ctx context.Context, accountID int64) error {
 }
 
 func BoostStart(ctx context.Context, accountID int64, startTimeStr string) {
+	larkAndLog(ctx, "开始启动定时监测,V2")
 	BoostLoop(ctx, accountID, startTimeStr)
 }
 
