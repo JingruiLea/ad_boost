@@ -22,3 +22,5 @@ WORKDIR /opt/output
 EXPOSE 9000
 
 ENTRYPOINT ["/bin/sh", "./bootstrap.sh"]
+
+

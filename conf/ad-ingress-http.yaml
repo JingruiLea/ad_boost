@@ -1,0 +1,35 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: unified-ingress
+  namespace: default
+  annotations:
+    cert-manager.io/cluster-issuer: "letsencrypt-prod"
+spec:
+  ingressClassName: nginx
+  rules:
+    - host: "www.flux-aigc.com"
+      http:
+        paths:
+          - path: "/"
+            pathType: Prefix
+            backend:
+              service:
+                name: ad-boost-svc
+                port:
+                  number: 80
+    - host: "flux-aigc.com"
+      http:
+        paths:
+          - path: "/"
+            pathType: Prefix
+            backend:
+              service:
+                name: ad-boost-svc
+                port:
+                  number: 80
+  tls:
+    - hosts:
+        - "www.flux-aigc.com"
+        - "flux-aigc.com"
+      secretName: flux-aigc-com-tls

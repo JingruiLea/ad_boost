@@ -44,7 +44,7 @@ func MGetAdAccountByShopID(ctx context.Context, shopID int64) (accounts []*model
 
 func MGetAllAccount(ctx context.Context) (accounts []*model.Advertiser, err error) {
 	db := dal.GetDB(ctx)
-	err = db.Where("id > s", 0).Find(&accounts).Error
+	err = db.Where("id > ?", 0).Find(&accounts).Error
 	if err != nil {
 		logs.CtxErrorf(ctx, "MGetAllAccount db.Where error: %v", err)
 		return nil, err

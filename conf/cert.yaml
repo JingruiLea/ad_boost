@@ -1,0 +1,13 @@
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: flux-aigc-com-tls
+  namespace: default  # 如果需要，请修改为适当的命名空间
+spec:
+  secretName: flux-aigc-com-tls
+  issuerRef:
+    name: letsencrypt-prod  # 请替换为您的 ClusterIssuer 名称
+    kind: ClusterIssuer
+  dnsNames:
+    - "*.flux-aigc.com"
+    - "flux-aigc.com"
