@@ -22,7 +22,7 @@ func TestGetReport(t *testing.T) {
 			name: "",
 			args: args{
 				ctx: context.Background(),
-				req: NewGetReportReq(1748031128935424, 2893532936291624, now.New(time.Now().Add(time.Hour*48*-1)).BeginningOfDay(), now.New(time.Now().Add(time.Hour*48*-1)).EndOfDay(), fields),
+				req: NewGetReportReq(1703886601680909, 2691211639665967, now.New(time.Now().Add(time.Hour*48*-1)).BeginningOfDay(), now.New(time.Now().Add(time.Hour*48*-1)).EndOfDay(), fields),
 			},
 			wantErr: false,
 		},

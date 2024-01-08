@@ -19,7 +19,7 @@ spec:
     spec:
       containers:
         - name: ad-boost
-          image: registry.ap-southeast-1.aliyuncs.com/pdfgpt/boost:v0.0.1
+          image: registry.cn-hangzhou.aliyuncs.com/pdfgpthz/ad_boost:v0.0.1
           ports:
             - containerPort: 9000
           env:
@@ -30,7 +30,7 @@ spec:
               subPath: "log"
               name: log-storage
       imagePullSecrets:
-        - name: aliyun-secret
+        - name: aliyun-secret-hz
       volumes:
         - name: log-storage
           persistentVolumeClaim:

@@ -44,7 +44,6 @@ func SyncAds(ctx context.Context, advertiserID int64, adID ...int64) error {
 		for _, a := range resp.List {
 			m := a.ToModel()
 			m.AdvertiserID = advertiserID
-			m.DeliverySetting.AdvertiserID = advertiserID
 			adList = append(adList, m)
 		}
 		err = ad_dal.CreateOrUpdateAds(ctx, adList)

@@ -10,11 +10,6 @@ import (
 )
 
 func GetAdGroupList(ctx context.Context, req *GetAdGroupListReq) (*GetAdGroupListRespData, error) {
-	req.Page = 1
-	req.PageSize = 10
-	req.AdvertiserID = 1748031128935424
-	req.Filter.MarketingGoal = ttypes.MarketingGoalLivePromGoods
-
 	var resp GetAdGroupListRespData
 	err := httpclient.NewClient().AdGet(ctx, req.AdvertiserID, "https://ad.oceanengine.com/open_api/v1.0/qianchuan/campaign_list/get/", &resp, utils.Obj2Map(req))
 	if err != nil {

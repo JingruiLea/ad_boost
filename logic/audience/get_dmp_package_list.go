@@ -10,21 +10,14 @@ import (
 )
 
 type GetDMPPackageListReq struct {
-	AdvertiserId        int64               `json:"advertiser_id"`
-	RetargetingTagsType RetargetingTagsType `json:"retargeting_tags_type"`
-	Offset              int                 `json:"offset,omitempty"`
-	Limit               int                 `json:"limit,omitempty"`
+	AdvertiserId        int64                      `json:"advertiser_id"`
+	RetargetingTagsType ttypes.RetargetingTagsType `json:"retargeting_tags_type"`
+	Offset              int                        `json:"offset,omitempty"`
+	Limit               int                        `json:"limit,omitempty"`
 }
 
-type RetargetingTagsType int
-
-const (
-	RetargetingTagsTypeAll    RetargetingTagsType = 0
-	RetargetingTagsTypeCustom RetargetingTagsType = 1
-)
-
 func GetDMPPackageList(ctx context.Context, req *GetDMPPackageListReq) error {
-	var resp GetDMPPackageListResp
+	var resp GetDMPPackageListRespData
 	err := httpclient.NewClient().AdGet(ctx, req.AdvertiserId, "https://ad.oceanengine.com/open_api/v1.0/qianchuan/dmp/audiences/get/", &resp, utils.Obj2Map(req))
 	if err != nil {
 		logs.CtxErrorf(ctx, "GetDMPPackageList httpclient.NewClient().Get error: %v", err)
@@ -33,11 +26,6 @@ func GetDMPPackageList(ctx context.Context, req *GetDMPPackageListReq) error {
 	fmt.Printf("GetDMPPackageList respMap: %s", utils.GetJsonStr(resp))
 	//TODO Account
 	return nil
-}
-
-type GetDMPPackageListResp struct {
-	ttypes.BaseResp
-	Data *GetDMPPackageListRespData `json:"data"`
 }
 
 type GetDMPPackageListRespData struct {

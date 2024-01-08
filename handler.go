@@ -4,14 +4,11 @@ import (
 	"bytes"
 	"context"
 	"github.com/JingruiLea/ad_boost/common/logs"
-	"github.com/JingruiLea/ad_boost/dal/redis_dal"
 	"github.com/JingruiLea/ad_boost/lark"
-	"github.com/JingruiLea/ad_boost/utils"
+	"github.com/JingruiLea/ad_boost/logic/auth"
+	"github.com/gin-gonic/gin"
 	"io/ioutil"
 	"net/http"
-	"time"
-
-	"github.com/gin-gonic/gin"
 )
 
 type GinH struct {
@@ -34,6 +31,13 @@ func Register(router *gin.RouterGroup) {
 				for _, param := range params {
 					paramsMap[param.Key] = param.Value
 				}
+
+				// 从GET请求的查询字符串中获取参数
+				queryParams := ctx.Request.URL.Query()
+				for key, values := range queryParams {
+					paramsMap[key] = values[0]
+				}
+
 				requestBody, err := ctx.GetRawData()
 				if err != nil {
 					ctx.AbortWithStatus(500)
@@ -73,24 +77,9 @@ func initRoutes() {
 	//api/v1/oceanengine/callback
 	handlers = append(handlers, &GinH{
 		Method:  http.MethodGet,
-		Path:    "/api/v1/oceanengine/callback",
-		Handler: OceanEngineCallback,
+		Path:    "/api/v1/auth/oceanengine/callback",
+		Handler: auth.OceanEngineCallback,
 	})
-}
-
-func OceanEngineCallback(ctx context.Context, params map[string]string, requestBody []byte) (interface{}, error) {
-	logs.CtxInfof(ctx, utils.GetJsonStr(params))
-	logs.CtxInfof(ctx, string(requestBody))
-	authCode, ok := params["auth_code"]
-	if !ok {
-		return "no auto code", nil
-	}
-	err := redis_dal.GetRedisClient().Set(ctx, "auth_code", authCode, time.Hour*24).Err()
-	if err != nil {
-		logs.CtxErrorf(ctx, "OceanEngineCallback set redis_dal error. %s", err.Error())
-		return nil, err
-	}
-	return "success", nil
 }
 
 func RegisterLark(router *gin.RouterGroup) {

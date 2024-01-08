@@ -6,6 +6,7 @@ import (
 	"github.com/JingruiLea/ad_boost/dal/account_dal"
 	"github.com/JingruiLea/ad_boost/dal/shop_dal"
 	"github.com/JingruiLea/ad_boost/logic/account"
+	"github.com/JingruiLea/ad_boost/logic/auth"
 	"github.com/JingruiLea/ad_boost/model"
 )
 
@@ -23,14 +24,26 @@ func SyncAccount(ctx context.Context, accessToken string, refreshToken string) e
 			logs.CtxErrorf(ctx, "SyncAccount shop_dal.CreateOrUpdateShop error: %v", err)
 			return err
 		}
-		//从shop_id查出所有ad_id
+		//从shop_id查出所有account_id
 		adIDs, err := account.GetAdAccountByShopID(ctx, shop.ShopID)
 		if err != nil {
 			logs.CtxErrorf(ctx, "SyncAccount account.GetAdAccountByShopID error: %v", err)
 			return err
 		}
+		//给每个account配置at和rt,后续所有接口可以使用.
+		for _, adID := range adIDs {
+			err = auth.SaveAtRtToRedis(ctx, accessToken, refreshToken, adID)
+			if err != nil {
+				logs.CtxErrorf(ctx, "SyncAccount auth.SaveAtRtToRedis error: %v", err)
+				return err
+			}
+		}
 		//根据ad_id查出所有ad_account
-		adAccounts, err := account.MGetAdInfoDetail(ctx, adIDs)
+		adAccounts, err := account.MGetAdvertiserInfoDetail(ctx, adIDs)
+		if err != nil {
+			logs.CtxErrorf(ctx, "SyncAccount account.MGetAdvertiserInfoDetail error: %v", err)
+			return err
+		}
 		for _, adAccount := range adAccounts {
 			adAccountModel := adAccount.ToModel()
 			adAccountModel.ShopID = shop.ShopID
@@ -45,9 +58,10 @@ func SyncAccount(ctx context.Context, accessToken string, refreshToken string) e
 				logs.CtxErrorf(ctx, "SyncAccount account.GetAwemeByAdID error: %v", err)
 				return err
 			}
+			logs.CtxInfof(ctx, "找到%d条aweme_id", len(awemeAccounts.AwemeIdList))
 			//TODO 大于10条的情况
 			for _, info := range awemeAccounts.AwemeIdList {
-				err = account_dal.CreateOrUpdateAweme(ctx, info.ToModel())
+				err = account_dal.CreateOrUpdateAweme(ctx, info.ToModel(adAccountModel.AdvertiserID))
 				if err != nil {
 					logs.CtxErrorf(ctx, "SyncAccount shop_dal.CreateOrUpdateAweme error: %v", err)
 					return err

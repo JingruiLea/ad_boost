@@ -10,39 +10,6 @@ import (
 	"time"
 )
 
-func MGetAdReport(ctx context.Context, req *MGetAdReportReq) (*MGetAdReportRespData, error) {
-	var resp MGetAdReportRespData
-	err := httpclient.NewClient().AdGet(ctx, req.AdvertiserID, "https://ad.oceanengine.com/open_api/v1.0/qianchuan/report/ad/get/", &resp, utils.Obj2Map(req))
-	if err != nil {
-		logs.CtxErrorf(ctx, "MGetAdReport httpclient.NewClient().Post error: %v", err)
-		return nil, err
-	}
-	return &resp, nil
-}
-
-func MGetCommonAdReport(ctx context.Context, advertiserID int64, adIDs []int64) ([]*AdReport, error) {
-	req := &MGetAdReportReq{
-		AdvertiserID: advertiserID,
-		StartDate:    time.Now().Format("2006-01-02"),
-		EndDate:      time.Now().Format("2006-01-02"),
-		Fields:       MGetAdReportFieldAllOrderCreateRoi7Days.Common(),
-		Filtering: &MGetAdReportFiltering{
-			MarketingGoal: ttypes.MarketingGoalLivePromGoods,
-		},
-		Page:     1,
-		PageSize: len(adIDs),
-	}
-	req.StartDate = time.Now().AddDate(0, 0, -1).Format("2006-01-02")
-	req.EndDate = time.Now().Format("2006-01-02")
-	req.Filtering.AdIds = adIDs
-	resp, err := MGetAdReport(ctx, req)
-	if err != nil {
-		logs.CtxErrorf(ctx, "MGetAdReport error: %v", err)
-		return nil, err
-	}
-	return resp.List, nil
-}
-
 type MGetAdReportReq struct {
 	AdvertiserID    int64                       `json:"advertiser_id,omitempty"`    // 广告主id
 	StartDate       string                      `json:"start_date,omitempty"`       // 开始时间，格式 2021-04-05
@@ -241,6 +208,7 @@ func (MGetAdReportField) Common() []MGetAdReportField {
 		MGetAdReportFieldConvertCnt,
 		MGetAdReportFieldConvertCost,
 		MGetAdReportFieldConvertRate,
+		MGetAdReportFieldCpcPlatform,
 	}
 }
 
@@ -291,4 +259,59 @@ func (a *AdReport) ToModel(cpa, roi float64) *model.AdReportItem {
 		RoiGoal:              roi,
 	}
 	return ret
+}
+
+func MGetAdReport(ctx context.Context, req *MGetAdReportReq) (*MGetAdReportRespData, error) {
+	var resp MGetAdReportRespData
+	err := httpclient.NewClient().AdGet(ctx, req.AdvertiserID, "https://ad.oceanengine.com/open_api/v1.0/qianchuan/report/ad/get/", &resp, utils.Obj2Map(req))
+	if err != nil {
+		logs.CtxErrorf(ctx, "MGetAdReport httpclient.NewClient().Post error: %v", err)
+		return nil, err
+	}
+	return &resp, nil
+}
+
+func MGetCommonAdDailyReport(ctx context.Context, advertiserID int64, adIDs []int64) ([]*AdReport, error) {
+	req := &MGetAdReportReq{
+		AdvertiserID: advertiserID,
+		StartDate:    time.Now().Format("2006-01-02"),
+		EndDate:      time.Now().Format("2006-01-02"),
+		Fields:       MGetAdReportFieldAllOrderCreateRoi7Days.Common(),
+		Filtering: &MGetAdReportFiltering{
+			MarketingGoal: ttypes.MarketingGoalLivePromGoods,
+			AdIds:         adIDs,
+		},
+		TimeGranularity: MGetAdReportTimeGranularityDaily,
+		Page:            1,
+		PageSize:        len(adIDs),
+	}
+	resp, err := MGetAdReport(ctx, req)
+	if err != nil {
+		logs.CtxErrorf(ctx, "MGetAdReport error: %v", err)
+		return nil, err
+	}
+	return resp.List, nil
+}
+
+func MGetCommonAdDailyReportLarge(ctx context.Context, advertiserID int64, adIDs []int64) ([]*AdReport, error) {
+	const batchSize = 50
+	var allReports []*AdReport
+
+	for i := 0; i < len(adIDs); i += batchSize {
+		end := i + batchSize
+		if end > len(adIDs) {
+			end = len(adIDs)
+		}
+
+		batchAdIDs := adIDs[i:end]
+		reports, err := MGetCommonAdDailyReport(ctx, advertiserID, batchAdIDs)
+		if err != nil {
+			logs.CtxErrorf(ctx, "MGetCommonAdDailyReport error: %v", err)
+			return nil, err
+		}
+
+		allReports = append(allReports, reports...)
+	}
+
+	return allReports, nil
 }

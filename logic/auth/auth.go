@@ -21,9 +21,8 @@ type ApiOpenApiOauth2AccessTokenPostRequestExample struct {
 
 const APPID = 1773197267842080
 const Secret = "88ac6c359042864c88fd2e7ec93ff785faa234ee"
-const AuthCode = "8243c18d89cde3052bc0e1806c493135faf6a625"
 
-func Auth(ctx context.Context) (accessToken, refreshToken string, err error) {
+func Auth(ctx context.Context, authCode string) (accessToken, refreshToken string, err error) {
 	configuration := config.NewConfiguration()
 	apiClient := ad_open_sdk_go.Init(configuration)
 	apiClient.SetLogEnable(true)
@@ -31,7 +30,7 @@ func Auth(ctx context.Context) (accessToken, refreshToken string, err error) {
 	var request ApiOpenApiOauth2AccessTokenPostRequestExample
 	request.Oauth2AccessTokenRequest.AppId = PtrInt64(APPID)
 	request.Oauth2AccessTokenRequest.Secret = Secret
-	request.Oauth2AccessTokenRequest.AuthCode = AuthCode
+	request.Oauth2AccessTokenRequest.AuthCode = authCode
 	resp, _, err := apiClient.Oauth2AccessTokenApi().
 		Post(ctx).
 		Oauth2AccessTokenRequest(request.Oauth2AccessTokenRequest).
@@ -39,6 +38,9 @@ func Auth(ctx context.Context) (accessToken, refreshToken string, err error) {
 	if err != nil {
 		logs.CtxErrorf(ctx, "Auth apiClient.Oauth2AccessTokenApi error: %v", err)
 		return "", "", err
+	}
+	if resp == nil || resp.Data == nil || resp.Data.AccessToken == nil || resp.Data.RefreshToken == nil {
+		return "", "", fmt.Errorf("授权失败")
 	}
 	return *resp.Data.AccessToken, *resp.Data.RefreshToken, nil
 }
@@ -71,11 +73,19 @@ func RefreshTokenByAccountID(ctx context.Context, accountID int64) {
 		logs.CtxErrorf(ctx, "RefreshTokenByAccountID shop_dal.UpdateShop error: %v", err)
 		return
 	}
-	err = saveAtRtToRedis(ctx, at, rt, accountID)
+	accounts, err := account_dal.MGetAdAccountByShopID(ctx, account.ShopID)
 	if err != nil {
-		logs.CtxErrorf(ctx, "RefreshTokenByAccountID saveAtRtToRedis error: %v", err)
+		logs.CtxErrorf(ctx, "RefreshTokenByAccountID account_dal.MGetAdAccountByShopID error: %v", err)
 		return
 	}
+	for _, accountItem := range accounts {
+		err = SaveAtRtToRedis(ctx, at, rt, accountItem.AdvertiserID)
+		if err != nil {
+			logs.CtxErrorf(ctx, "RefreshTokenByAccountID SaveAtRtToRedis error: %v", err)
+			return
+		}
+	}
+	return
 }
 
 func RefreshToken(ctx context.Context, rtOld string) (at, rt string, err error) {
@@ -111,18 +121,18 @@ func GetAccessToken(ctx context.Context, accountID int64) (token string, err err
 	return at, nil
 }
 
-func saveAtRtToRedis(ctx context.Context, at, rt string, accountID int64) error {
+func SaveAtRtToRedis(ctx context.Context, at, rt string, accountID int64) error {
 	atk := fmt.Sprintf("ad_boost:access_token:account:%d", accountID)
 	rtk := fmt.Sprintf("ad_boost:refresh_token:account:%d", accountID)
 
 	err := redis_dal.GetRedisClient().Set(ctx, atk, at, 24*time.Hour).Err()
 	if err != nil {
-		logs.CtxErrorf(ctx, "saveAtRtToRedis Set AccessToken error: %v", err)
+		logs.CtxErrorf(ctx, "SaveAtRtToRedis Set AccessToken error: %v", err)
 		return err
 	}
 	err = redis_dal.GetRedisClient().Set(ctx, rtk, rt, 24*time.Hour*30).Err()
 	if err != nil {
-		logs.CtxErrorf(ctx, "saveAtRtToRedis Set RefreshToken error: %v", err)
+		logs.CtxErrorf(ctx, "SaveAtRtToRedis Set RefreshToken error: %v", err)
 		return err
 	}
 	return nil

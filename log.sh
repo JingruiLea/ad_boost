@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # 远程服务器别名
-remote_alias="ali"
+remote_alias="alihz1"
 
 # 在远程服务器上获取包含pdfgpt-main的Pod信息
 pod_info=$(ssh ${remote_alias} "kubectl get pods --all-namespaces | grep ad-boost")

@@ -16,6 +16,7 @@ type Aweme struct {
 	AwemeShowId             string         `json:"aweme_show_id"`
 	AwemeStatus             string         `json:"aweme_status"`
 	BindType                datatypes.JSON `json:"bind_type"`
+	AccountID               int64          `json:"account_id"`
 
 	gorm.Model
 }

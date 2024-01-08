@@ -26,8 +26,8 @@ func TestGetAdInfoDetail(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if _, err := MGetAdInfoDetail(tt.args.ctx, tt.args.adIDs); (err != nil) != tt.wantErr {
-				t.Errorf("MGetAdInfoDetail() error = %v, wantErr %v", err, tt.wantErr)
+			if _, err := MGetAdvertiserInfoDetail(tt.args.ctx, tt.args.adIDs); (err != nil) != tt.wantErr {
+				t.Errorf("MGetAdvertiserInfoDetail() error = %v, wantErr %v", err, tt.wantErr)
 			}
 		})
 	}

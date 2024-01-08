@@ -25,8 +25,8 @@ func TestSync(t *testing.T) {
 			name: "",
 			args: args{
 				ctx:          context.Background(),
-				accessToken:  "b7f1815041aa3835b1e8dcc4ede24e7a33cd103e",
-				refreshToken: "ff0346703019c70ac8d9232499278a70ad747b39",
+				accessToken:  "c2cc09e50e011f5aefecd5bac1dcdf71a7172315",
+				refreshToken: "28e1f7407df9775e74b696d10274bbc71dcad7cd",
 			},
 			wantErr: false,
 		},

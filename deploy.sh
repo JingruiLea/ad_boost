@@ -28,7 +28,7 @@ if [ -z "$IMAGE_TAG" ]; then
   usage
 fi
 
-REMOTE_HOST=ali
+REMOTE_HOST=alihz1
 
 KUBE_CONFIG=$(cat <<EOF
 apiVersion: apps/v1
@@ -52,7 +52,7 @@ spec:
     spec:
       containers:
         - name: ad-boost
-          image: registry.ap-southeast-1.aliyuncs.com/taimer/ad_boost:$IMAGE_TAG
+          image: registry.cn-hangzhou.aliyuncs.com/pdfgpthz/ad_boost:$IMAGE_TAG
           ports:
             - containerPort: 9000
           env:
@@ -65,7 +65,7 @@ spec:
               subPath: "log"
               name: log-storage
       imagePullSecrets:
-        - name: aliyun-secret
+        - name: aliyun-secret-hz
       volumes:
         - name: log-storage
           persistentVolumeClaim:

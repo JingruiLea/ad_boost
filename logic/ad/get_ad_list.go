@@ -120,48 +120,77 @@ type Ad struct {
 
 func (a *Ad) ToModel() *model.Ad {
 	ret := &model.Ad{
-		AdCreateTime:    a.AdCreateTime,
-		AdID:            a.AdID,
-		AdModifyTime:    a.AdModifyTime,
-		CampaignId:      a.CampaignId,
-		CampaignScene:   a.CampaignScene,
-		LabAdType:       a.LabAdType,
-		MarketingGoal:   a.MarketingGoal,
-		MarketingScene:  a.MarketingScene,
-		Name:            a.Name,
-		OptStatus:       a.OptStatus,
-		Status:          a.Status,
-		DeliverySetting: nil,
-	}
-	if a.DeliverySetting != nil {
-		ret.DeliverySetting = &model.DeliverySetting{
-			AdID:               a.AdID,
-			Budget:             a.DeliverySetting.Budget,
-			BudgetMode:         a.DeliverySetting.BudgetMode,
-			DeepBidType:        a.DeliverySetting.DeepBidType,
-			DeepExternalAction: a.DeliverySetting.DeepExternalAction,
-			EndTime:            a.DeliverySetting.EndTime,
-			ExternalAction:     a.DeliverySetting.ExternalAction,
-			ProductNewOpen:     a.DeliverySetting.ProductNewOpen,
-			RoiGoal:            a.DeliverySetting.RoiGoal,
-			SmartBidType:       a.DeliverySetting.SmartBidType,
-			StartTime:          a.DeliverySetting.StartTime,
-			CpaBid:             a.DeliverySetting.CpaBid,
-		}
+		AdCreateTime:   a.AdCreateTime,
+		AdID:           a.AdID,
+		AdModifyTime:   a.AdModifyTime,
+		CampaignId:     a.CampaignId,
+		CampaignScene:  a.CampaignScene,
+		LabAdType:      a.LabAdType,
+		MarketingGoal:  a.MarketingGoal,
+		MarketingScene: a.MarketingScene,
+		Name:           a.Name,
+		OptStatus:      a.OptStatus,
+		Status:         a.Status,
+		DeliverySetting: model.DeliverySetting{
+			SmartBidType:          a.DeliverySetting.SmartBidType,
+			ExternalAction:        a.DeliverySetting.ExternalAction,
+			DeepExternalAction:    a.DeliverySetting.DeepExternalAction,
+			DeepBidType:           a.DeliverySetting.DeepBidType,
+			ROIGoal:               a.DeliverySetting.ROIGoal,
+			Budget:                a.DeliverySetting.Budget,
+			ReviveBudget:          a.DeliverySetting.ReviveBudget,
+			BudgetMode:            a.DeliverySetting.BudgetMode,
+			CPABid:                a.DeliverySetting.CPABid,
+			VideoScheduleType:     a.DeliverySetting.VideoScheduleType,
+			LiveScheduleType:      a.DeliverySetting.LiveScheduleType,
+			StartTime:             a.DeliverySetting.StartTime,
+			EndTime:               a.DeliverySetting.EndTime,
+			ScheduleTime:          a.DeliverySetting.ScheduleTime,
+			ScheduleFixedRange:    a.DeliverySetting.ScheduleFixedRange,
+			EnableAutoPause:       a.DeliverySetting.EnableAutoPause,
+			AutoManageStrategyCmd: a.DeliverySetting.AutoManageStrategyCmd,
+			EnableFollowMaterial:  a.DeliverySetting.EnableFollowMaterial,
+			ProductNewOpen:        a.DeliverySetting.ProductNewOpen,
+			QCPXMode:              a.DeliverySetting.QCPXMode,
+			AllowQCPX:             a.DeliverySetting.AllowQCPX,
+		},
 	}
 	return ret
 }
 
 type DeliverySetting struct {
-	Budget             float64                   `json:"budget"`
-	BudgetMode         ttypes.BudgetMode         `json:"budget_mode"`
-	DeepBidType        ttypes.DeepBidType        `json:"deep_bid_type,omitempty"`
-	DeepExternalAction ttypes.DeepExternalAction `json:"deep_external_action,omitempty"`
-	EndTime            string                    `json:"end_time"`
-	ExternalAction     ttypes.ExternalAction     `json:"external_action"`
-	ProductNewOpen     bool                      `json:"product_new_open"`
-	RoiGoal            float64                   `json:"roi_goal,omitempty"`
-	SmartBidType       ttypes.SmartBidType       `json:"smart_bid_type"`
-	StartTime          string                    `json:"start_time"`
-	CpaBid             float64                   `json:"cpa_bid,omitempty"`
+	SmartBidType          ttypes.SmartBidType       `json:"smart_bid_type"`           // 投放场景（出价方式）
+	ExternalAction        ttypes.ExternalAction     `json:"external_action"`          // 转化目标
+	DeepExternalAction    ttypes.DeepExternalAction `json:"deep_external_action"`     // 深度转化目标
+	DeepBidType           ttypes.DeepBidType        `json:"deep_bid_type"`            // 深度出价方式
+	ROIGoal               float64                   `json:"roi_goal"`                 // 支付ROI目标
+	Budget                float64                   `json:"budget"`                   // 预算
+	ReviveBudget          float64                   `json:"revive_budget"`            // 复活预算
+	BudgetMode            ttypes.BudgetMode         `json:"budget_mode"`              // 预算类型
+	CPABid                float64                   `json:"cpa_bid"`                  // 转化出价
+	VideoScheduleType     ttypes.VideoScheduleType  `json:"video_schedule_type"`      // 短视频投放日期选择方式
+	LiveScheduleType      ttypes.LiveScheduleType   `json:"live_schedule_type"`       // 直播间投放时段选择方式
+	StartTime             string                    `json:"start_time"`               // 投放开始时间
+	EndTime               string                    `json:"end_time"`                 // 投放结束时间
+	ScheduleTime          string                    `json:"schedule_time"`            // 投放时段
+	ScheduleFixedRange    int                       `json:"schedule_fixed_range"`     // 固定投放时长
+	EnableAutoPause       int                       `json:"enable_auto_pause"`        // 是否启用超成本自动暂停
+	AutoManageStrategyCmd int                       `json:"auto_manage_strategy_cmd"` // 托管策略
+	EnableFollowMaterial  int                       `json:"enable_follow_material"`   // 是否优质素材自动同步投放
+	ProductNewOpen        bool                      `json:"product_new_open"`         // 是否开启新品加速
+	QCPXMode              ttypes.QcpxMode           `json:"qcpx_mode"`                // 智能优惠券状态
+	AllowQCPX             bool                      `json:"allow_qcpx"`               // 是否支持智能优惠券
+}
+
+func (a *Ad) IsRoi() bool {
+	return a.MarketingGoal == ttypes.MarketingGoalLivePromGoods &&
+		a.DeliverySetting.ExternalAction == ttypes.ExternalActionAdConvertTypeLiveSuccessorderPay &&
+		a.DeliverySetting.DeepExternalAction == ttypes.DeepExternalActionAdConvertTypeLivePayRoi &&
+		a.DeliverySetting.DeepBidType == ttypes.DeepBidTypeMin
+}
+
+func (a *Ad) IsCpa() bool {
+	return a.MarketingGoal == ttypes.MarketingGoalLivePromGoods &&
+		a.DeliverySetting.ExternalAction == ttypes.ExternalActionAdConvertTypeLiveSuccessorderPay &&
+		a.DeliverySetting.DeepExternalAction == ""
 }

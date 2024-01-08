@@ -1,6 +1,7 @@
 package auth
 
 import (
+	"github.com/JingruiLea/ad_boost/common/logs"
 	"golang.org/x/net/context"
 	"testing"
 )
@@ -22,7 +23,14 @@ func TestAuth(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			Auth(tt.args.ctx)
+			ctx := tt.args.ctx
+			at, rt, err := Auth(tt.args.ctx, "")
+			t.Logf("at: %v, rt: %v, err: %v", at, rt, err)
+			err = SaveAtRtToRedis(ctx, at, rt, 1008611)
+			if err != nil {
+				logs.CtxErrorf(ctx, "RefreshTokenByAccountID SaveAtRtToRedis error: %v", err)
+				return
+			}
 		})
 	}
 }

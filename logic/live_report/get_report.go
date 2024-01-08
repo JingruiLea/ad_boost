@@ -41,7 +41,7 @@ func NewGetReportReq(adID, awemeID int64, startTime, endTime time.Time, fields [
 		AdvertiserID: adID,
 		AwemeID:      awemeID,
 		StartTime:    startTime.Format("2006-01-02 15:04:05"),
-		EndTime:      endTime.Format("2006-01-02 15:04:05"),
+		EndTime:      endTime.AddDate(0, 0, -1).Format("2006-01-02 15:04:05"),
 		Fields:       fields,
 	}
 }

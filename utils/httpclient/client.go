@@ -12,11 +12,6 @@ import (
 	"net/http"
 )
 
-var CommonHeader = map[string]string{
-	"Content-Type": "application/json",
-	"Access-Token": "5620509264844a715ca68f1aa04c956e8d90bda0",
-}
-
 type Client struct {
 	httpClient *http.Client
 }

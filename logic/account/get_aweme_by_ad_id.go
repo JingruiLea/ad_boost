@@ -44,7 +44,7 @@ type AwemeInfo struct {
 	BindType                []string `json:"bind_type"`
 }
 
-func (a *AwemeInfo) ToModel() *model.Aweme {
+func (a *AwemeInfo) ToModel(accountID int64) *model.Aweme {
 	ret := &model.Aweme{
 		AwemeAvatar:             a.AwemeAvatar,
 		AwemeHasLivePermission:  a.AwemeHasLivePermission,
@@ -55,6 +55,7 @@ func (a *AwemeInfo) ToModel() *model.Aweme {
 		AwemeShowId:             a.AwemeShowId,
 		AwemeStatus:             a.AwemeStatus,
 		BindType:                datatypes.JSON(utils.GetJsonStr(a.BindType)),
+		AccountID:               accountID,
 	}
 	return ret
 }

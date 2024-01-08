@@ -21,7 +21,7 @@ func TestGetShopAccount(t *testing.T) {
 			name: "",
 			args: args{
 				ctx: context.Background(),
-				at:  "a3921c59e232fef3612a17390c871d54f89e365a",
+				at:  "c2cc09e50e011f5aefecd5bac1dcdf71a7172315",
 			},
 			wantAccounts: nil,
 			wantErr:      false,

@@ -46,5 +46,5 @@ func Init() {
 }
 
 func GetDB(ctx context.Context) *gorm.DB {
-	return db.WithContext(ctx)
+	return db.WithContext(ctx).Debug()
 }

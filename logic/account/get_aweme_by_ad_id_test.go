@@ -2,8 +2,13 @@ package account
 
 import (
 	"context"
+	"github.com/JingruiLea/ad_boost/dal/redis_dal"
 	"testing"
 )
+
+func init() {
+	redis_dal.Init()
+}
 
 func TestGetAwemeByAdID(t *testing.T) {
 	type args struct {

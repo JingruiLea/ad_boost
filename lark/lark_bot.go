@@ -2,13 +2,27 @@ package lark
 
 import (
 	"context"
-	"github.com/JingruiLea/ad_boost/common/logs"
 	"github.com/JingruiLea/ad_boost/dal/redis_dal"
 	"github.com/chyroc/lark"
 	"github.com/gin-gonic/gin"
 	jsoniter "github.com/json-iterator/go"
+	"github.com/sirupsen/logrus"
 	"net/http"
 )
+
+// 定义自己的logger, 避免循环引用
+var logs Logger
+
+type Logger struct {
+}
+
+func (*Logger) CtxInfof(ctx context.Context, format string, args ...interface{}) {
+	logrus.WithContext(ctx).Infof(format, args)
+}
+
+func (*Logger) CtxErrorf(ctx context.Context, format string, args ...interface{}) {
+	logrus.WithContext(ctx).Errorf(format, args)
+}
 
 const AppID = "cli_a457b42cbbf8d00e"
 const AppSec = "HBKzMGefcvsk2HGn0q2lCbNSV5xtm5Sr"
@@ -16,6 +30,7 @@ const EncryptKey = "1iJcXP40z2rOPBYf3VqD6codBZItkbRO"
 const VerificationToken = "rGCakotMu664p648Quqqkh6r5zjWThWE"
 
 const AdBoostChatID = "oc_586a7dec27b417492a5b0ae7ba11a75e"
+const AlertChatID = "" //TODO
 
 var Bot *lark.Lark
 
@@ -50,6 +65,13 @@ func SendRoomMessage(ctx context.Context, msg string) {
 	}
 }
 
+func SendAlertMessage(ctx context.Context, msg string) {
+	_, _, err := Bot.Message.Send().ToChatID(AlertChatID).SendText(ctx, msg)
+	if err != nil {
+		logs.CtxErrorf(ctx, "send message failed, err: %v", err)
+	}
+}
+
 var handlers = make([]func(string) string, 0)
 
 func HandleTextMsg(ctx context.Context, msg string, cli *lark.Lark) {
@@ -60,6 +82,7 @@ func HandleTextMsg(ctx context.Context, msg string, cli *lark.Lark) {
 		return
 	}
 	msg = text["text"]
+
 	for _, h := range handlers {
 		resp := h(msg)
 		if resp != "" {

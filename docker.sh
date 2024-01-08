@@ -31,6 +31,6 @@ fi
 echo "The version is $IMAGE_TAG"
 
 # 构建镜像
-docker build . -t registry.ap-southeast-1.aliyuncs.com/taimer/ad_boost:"$IMAGE_TAG"
-docker push registry.ap-southeast-1.aliyuncs.com/taimer/ad_boost:"$IMAGE_TAG"
+docker build . -t registry.cn-hangzhou.aliyuncs.com/pdfgpthz/ad_boost:"$IMAGE_TAG"
+docker push registry.cn-hangzhou.aliyuncs.com/pdfgpthz/ad_boost:"$IMAGE_TAG"
 

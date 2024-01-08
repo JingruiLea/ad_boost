@@ -2,6 +2,7 @@ CREATE TABLE ad (
     id BIGINT NOT NULL PRIMARY KEY AUTO_INCREMENT COMMENT '主键',
     ad_create_time VARCHAR(255) NOT NULL DEFAULT '' COMMENT '广告创建时间',
     ad_id BIGINT NOT NULL COMMENT '广告ID',
+    advertiser_id BIGINT NOT NULL DEFAULT 0 COMMENT '广告主ID',
     ad_modify_time VARCHAR(255) NOT NULL DEFAULT '' COMMENT '广告修改时间',
     campaign_id BIGINT NOT NULL DEFAULT 0 COMMENT '广告组ID',
     campaign_scene VARCHAR(255) NOT NULL DEFAULT '' COMMENT '广告组场景',
@@ -11,15 +12,34 @@ CREATE TABLE ad (
     name VARCHAR(255) NOT NULL DEFAULT '' COMMENT '名称',
     opt_status VARCHAR(255) NOT NULL DEFAULT '' COMMENT '优化状态',
     status VARCHAR(255) NOT NULL DEFAULT '' COMMENT '状态',
-    advertiser_id BIGINT NOT NULL DEFAULT 0 COMMENT '广告主ID',
+
+    smart_bid_type VARCHAR(255) NOT NULL DEFAULT '' COMMENT '智能出价类型',
+    external_action VARCHAR(255) NOT NULL DEFAULT '' COMMENT '转化目标',
+    deep_external_action VARCHAR(255) NOT NULL DEFAULT '' COMMENT '深度转化目标',
+    deep_bid_type VARCHAR(255) NOT NULL DEFAULT '' COMMENT '深度出价方式',
+    roi_goal DOUBLE NOT NULL DEFAULT 0.0 COMMENT '支付ROI目标',
+    budget DOUBLE NOT NULL DEFAULT 0.0 COMMENT '预算',
+    revive_budget DOUBLE NOT NULL DEFAULT 0.0 COMMENT '复活预算',
+    budget_mode VARCHAR(255) NOT NULL DEFAULT '' COMMENT '预算类型',
+    cpa_bid DOUBLE NOT NULL DEFAULT 0.0 COMMENT '转化出价',
+    video_schedule_type VARCHAR(255) NOT NULL DEFAULT '' COMMENT '短视频投放日期选择方式',
+    live_schedule_type VARCHAR(255) NOT NULL DEFAULT '' COMMENT '直播间投放时段选择方式',
+    start_time DATETIME COMMENT '投放开始时间',
+    end_time DATETIME COMMENT '投放结束时间',
+    schedule_time VARCHAR(255) NOT NULL DEFAULT '' COMMENT '投放时段',
+    schedule_fixed_range INT NOT NULL DEFAULT 0 COMMENT '固定投放时长',
+    enable_auto_pause TINYINT(1) NOT NULL DEFAULT 0 COMMENT '是否启用超成本自动暂停',
+    auto_manage_strategy_cmd INT NOT NULL DEFAULT 0 COMMENT '托管策略',
+    enable_follow_material TINYINT(1) NOT NULL DEFAULT 0 COMMENT '是否优质素材自动同步投放',
+    product_new_open TINYINT(1) NOT NULL DEFAULT 0 COMMENT '是否开启新品加速',
+    qcpx_mode VARCHAR(255) NOT NULL DEFAULT '' COMMENT '智能优惠券状态',
+    allow_qcpx TINYINT(1) NOT NULL DEFAULT 0 COMMENT '是否支持智能优惠券',
 
     created_at DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3) COMMENT '创建时间',
     updated_at DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3) ON UPDATE CURRENT_TIMESTAMP(3) COMMENT '更新时间',
     deleted_at DATETIME(3) NULL DEFAULT NULL COMMENT '删除时间',
 
-    UNIQUE KEY (ad_id)
+    UNIQUE KEY (ad_id),
+    KEY idx_advertiser_id (advertiser_id)
 ) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COMMENT '广告信息';
 
-# add column advertiser_id
-ALTER TABLE ad ADD COLUMN advertiser_id BIGINT NOT NULL DEFAULT 0 COMMENT '广告主ID';
-ALTER TABLE ad ADD INDEX idx_advertiser_id (advertiser_id);

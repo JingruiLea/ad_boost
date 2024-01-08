@@ -9,18 +9,18 @@ import (
 	"github.com/JingruiLea/ad_boost/utils/httpclient"
 )
 
-func GetLiveRoomList(ctx context.Context, req *GetTodayLiveRoomReq) (*GetLiveRoomListRespData, error) {
+func GetLiveRoomList(ctx context.Context, req *GetLiveRoomListReq) (*GetLiveRoomListRespData, error) {
 	var resp GetLiveRoomListRespData
 	err := httpclient.NewClient().AdGet(ctx, req.AdvertiserID, "https://api.oceanengine.com/open_api/v1.0/qianchuan/today_live/room/get/", &resp, utils.Obj2Map(req))
 	if err != nil {
 		logs.CtxErrorf(ctx, "GetReport httpclient.NewClient().AdGet error: %v", err)
 		return nil, err
 	}
-	fmt.Printf("GetReport respMap: %s", utils.GetJsonStr(resp))
+	fmt.Printf("GetReport respMap: \n\n%s\n\n", utils.GetJsonStr(resp))
 	return &resp, err
 }
 
-type GetTodayLiveRoomReq struct {
+type GetLiveRoomListReq struct {
 	AdvertiserID int64              `json:"advertiser_id"` // 广告主id
 	AwemeID      int64              `json:"aweme_id"`      // 抖音号ID
 	DateTime     string             `json:"date_time"`     // 日期
@@ -63,9 +63,9 @@ type RoomReport struct {
 	ClickCnt                      int      `json:"click_cnt"`
 	ConvertCnt                    int      `json:"convert_cnt"`
 	ConvertRate                   float64  `json:"convert_rate"`
-	CpaPlatform                   int      `json:"cpa_platform"`
-	CpcPlatform                   int      `json:"cpc_platform"`
-	CpmPlatform                   int      `json:"cpm_platform"`
+	CpaPlatform                   float64  `json:"cpa_platform"`
+	CpcPlatform                   float64  `json:"cpc_platform"`
+	CpmPlatform                   float64  `json:"cpm_platform"`
 	Ctr                           float64  `json:"ctr"`
 	EndTime                       string   `json:"end_time"`
 	LiveClickCartCountAlias       int      `json:"live_click_cart_count_alias"`
@@ -74,8 +74,8 @@ type RoomReport struct {
 	LiveCreateOrderRate           float64  `json:"live_create_order_rate"`
 	LiveOrderPayCouponAmount      int      `json:"live_order_pay_coupon_amount"`
 	LivePayOrderCountAlias        int      `json:"live_pay_order_count_alias"`
-	LivePayOrderGmvAlias          int      `json:"live_pay_order_gmv_alias"`
-	LivePayOrderGmvAvg            int      `json:"live_pay_order_gmv_avg"`
+	LivePayOrderGmvAlias          float64  `json:"live_pay_order_gmv_alias"`
+	LivePayOrderGmvAvg            float64  `json:"live_pay_order_gmv_avg"`
 	LivePayOrderGmvRoi            float64  `json:"live_pay_order_gmv_roi"`
 	LivePayOrderRate              float64  `json:"live_pay_order_rate"`
 	LivePrepayOrderCountAlias     int      `json:"live_prepay_order_count_alias"`
@@ -83,10 +83,10 @@ type RoomReport struct {
 	LiveWatchOneMinuteCount       int      `json:"live_watch_one_minute_count"`
 	LubanLiveOrderCount           int      `json:"luban_live_order_count"`
 	LubanLivePayOrderCount        int      `json:"luban_live_pay_order_count"`
-	LubanLivePayOrderGmv          int      `json:"luban_live_pay_order_gmv"`
+	LubanLivePayOrderGmv          float64  `json:"luban_live_pay_order_gmv"`
 	LubanLivePayOrderGpm          float64  `json:"luban_live_pay_order_gpm"`
 	LubanLivePrepayOrderCount     int      `json:"luban_live_prepay_order_count"`
-	LubanLivePrepayOrderGmv       int      `json:"luban_live_prepay_order_gmv"`
+	LubanLivePrepayOrderGmv       float64  `json:"luban_live_prepay_order_gmv"`
 	RoomCover                     []string `json:"room_cover"`
 	RoomDelivery                  int      `json:"room_delivery"`
 	RoomId                        int64    `json:"room_id"`
@@ -97,7 +97,7 @@ type RoomReport struct {
 	TotalLiveCommentCnt           int      `json:"total_live_comment_cnt"`
 	TotalLiveFansClubJoinCnt      int      `json:"total_live_fans_club_join_cnt"`
 	TotalLiveFollowCnt            int      `json:"total_live_follow_cnt"`
-	TotalLiveGiftAmount           int      `json:"total_live_gift_amount"`
+	TotalLiveGiftAmount           float64  `json:"total_live_gift_amount"`
 	TotalLiveGiftCnt              int      `json:"total_live_gift_cnt"`
 	TotalLivePayOrderGpm          float64  `json:"total_live_pay_order_gpm"`
 	TotalLiveShareCnt             int      `json:"total_live_share_cnt"`

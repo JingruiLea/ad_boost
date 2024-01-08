@@ -15,7 +15,7 @@ func init() {
 func TestGetLiveRoomList(t *testing.T) {
 	type args struct {
 		ctx context.Context
-		req *GetTodayLiveRoomReq
+		req *GetLiveRoomListReq
 	}
 	tests := []struct {
 		name    string
@@ -26,10 +26,10 @@ func TestGetLiveRoomList(t *testing.T) {
 			name: "",
 			args: args{
 				ctx: context.Background(),
-				req: &GetTodayLiveRoomReq{
-					AdvertiserID: 1748031128935424,
-					AwemeID:      2080716558439432,
-					DateTime:     "2023-08-17",
+				req: &GetLiveRoomListReq{
+					AdvertiserID: 1703886601680909,
+					AwemeID:      2691211639665967,
+					DateTime:     "2024-01-07",
 					RoomStatus:   RoomStatusAll,
 					AdStatus:     AdStatusAll,
 					Fields:       RoomMetricsFieldStatCost.All(),

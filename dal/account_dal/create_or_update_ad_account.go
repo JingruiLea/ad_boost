@@ -31,3 +31,23 @@ func GetAdAccountByAccountID(ctx context.Context, accountID int64) (*model.Adver
 	}
 	return &adAccount, nil
 }
+
+func MGetAdAccountByShopID(ctx context.Context, shopID int64) (accounts []*model.Advertiser, err error) {
+	db := dal.GetDB(ctx)
+	err = db.Where("shop_id = ?", shopID).Find(&accounts).Error
+	if err != nil {
+		logs.CtxErrorf(ctx, "GetAdAccountByShopID db.Where error: %v", err)
+		return nil, err
+	}
+	return accounts, nil
+}
+
+func MGetAllAccount(ctx context.Context) (accounts []*model.Advertiser, err error) {
+	db := dal.GetDB(ctx)
+	err = db.Where("id > s", 0).Find(&accounts).Error
+	if err != nil {
+		logs.CtxErrorf(ctx, "MGetAllAccount db.Where error: %v", err)
+		return nil, err
+	}
+	return accounts, nil
+}

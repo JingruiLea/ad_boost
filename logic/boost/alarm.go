@@ -72,7 +72,7 @@ func GenReportByFilter(ctx context.Context, accountID int64, filter *ad.Filter) 
 		adMap[a.AdID] = a
 	}
 	//获取计划报表
-	reports, err := ad_report.MGetCommonAdReport(ctx, accountID, adIDs)
+	reports, err := ad_report.MGetCommonAdDailyReport(ctx, accountID, adIDs)
 	if err != nil {
 		logs.CtxErrorf(ctx, "AsyncAlarm ad_report.MGetCommonAdReport error: %v", err)
 		return fmt.Sprintf("获取计划报表失败: %v", err)
@@ -86,7 +86,7 @@ func GenReportByFilter(ctx context.Context, accountID int64, filter *ad.Filter) 
 	msg := ""
 	for _, report := range reports {
 		msg += MakeAdReportString(adMap, report)
-		models = append(models, report.ToModel(adMap[report.AdID].DeliverySetting.CpaBid, adMap[report.AdID].DeliverySetting.RoiGoal))
+		models = append(models, report.ToModel(adMap[report.AdID].DeliverySetting.CPABid, adMap[report.AdID].DeliverySetting.ROIGoal))
 	}
 	err = ad_dal.CreateAdReportItem(ctx, models)
 	if err != nil {
@@ -99,11 +99,11 @@ func MakeAdReportString(adMap map[int64]*ad.Ad, report *ad_report.AdReport) stri
 	ds := adMap[report.AdID].DeliverySetting
 	a := adMap[report.AdID]
 
-	price := ds.CpaBid
+	price := ds.CPABid
 	priceName := "CPA出价"
 	if ds.ExternalAction == ttypes.ExternalActionAdConvertTypeLiveSuccessorderPay &&
 		ds.DeepExternalAction == ttypes.DeepExternalActionAdConvertTypeLivePayRoi {
-		price = ds.RoiGoal
+		price = ds.ROIGoal
 		priceName = "ROI目标"
 	}
 

@@ -309,6 +309,8 @@ type DeliverySetting struct {
 type MarketingGoal string
 
 const (
+	// MarketingGoalLiveAll ALL 只能查询时使用
+	MarketingGoalLiveAll MarketingGoal = "ALL"
 	// MarketingGoalLivePromGoods LIVE_PROM_GOODS 代表直播带货
 	MarketingGoalLivePromGoods MarketingGoal = "LIVE_PROM_GOODS"
 	// MarketingGoalVideoPromGoods VIDEO_PROM_GOODS 代表视频带货
@@ -499,15 +501,15 @@ const (
 	AudienceModeAutoOrientation AudienceMode = "AUTO_ORIENTATION"
 )
 
-type DistrictType string
+type District string
 
 const (
-	// DistrictTypeCity CITY 省市
-	DistrictTypeCity DistrictType = "CITY"
-	// DistrictTypeCounty COUNTY 区县
-	DistrictTypeCounty DistrictType = "COUNTY"
-	// DistrictTypeNone NONE 不限，默认值
-	DistrictTypeNone DistrictType = "NONE"
+	// DistrictCity CITY 省市
+	DistrictCity District = "CITY"
+	// DistrictCounty COUNTY 区县
+	DistrictCounty District = "COUNTY"
+	// DistrictNone NONE 不限，默认值
+	DistrictNone District = "NONE"
 )
 
 type LocationType string
@@ -780,7 +782,67 @@ const (
 	AdStatusCampaignDisable         AdStatus = "CAMPAIGN_DISABLE"
 	AdStatusCampaignOfflineBudget   AdStatus = "CAMPAIGN_OFFLINE_BUDGET"
 	AdStatusCampaignPreOffline      AdStatus = "CAMPAIGN_PREOFFLINE_BUDGET"
-	AdStatusSystemDisable           AdStatus = "SYSTEM_DISABLE"
+	AdStatusSystemDisable           AdStatus = "SYSTEM_DISABLE" //系统暂停，因低效计划被系统自动暂停
 	AdStatusQuotaDisable            AdStatus = "QUOTA_DISABLE"
-	AdStatusRoi2Disable             AdStatus = "ROI2_DISABLE"
+	AdStatusRoi2Disable             AdStatus = "ROI2_DISABLE" //因该计划关联的抖音号开启全域推广，因此本计划被系统暂停
+
+)
+
+type ECPType string
+
+// 账户类型，可选值:
+// SHOP: 商家
+// SHOP_STAR: 商家达人
+// COMMON_STAR: 普通达人
+// AGENT: 百应机构
+const (
+	ECPTypeShop       ECPType = "SHOP"
+	ECPTypeShopStar   ECPType = "SHOP_STAR"
+	ECPTypeCommonStar ECPType = "COMMON_STAR"
+	ECPTypeAgent      ECPType = "AGENT"
+)
+
+type ExcludeLimitedRegion int
+
+const (
+	ExcludeLimitedRegionNo  ExcludeLimitedRegion = 0
+	ExcludeLimitedRegionYes ExcludeLimitedRegion = 1
+)
+
+type DistrictType bool
+
+const (
+	DistrictTypeExclude DistrictType = true  //排除地域
+	DistrictTypeInclude DistrictType = false //定向地域
+)
+
+type RetargetingTagsType int
+
+const (
+	RetargetingTagsTypeAll    RetargetingTagsType = 0
+	RetargetingTagsTypeCustom RetargetingTagsType = 1
+)
+
+type OrderPlatform string
+
+const (
+	OrderPlatformAll       OrderPlatform = "ALL"       // 全部
+	OrderPlatformQianchuan OrderPlatform = "QIANCHUAN" // 千川pc（默认）
+	OrderPlatformEcpAweme  OrderPlatform = "ECP_AWEME" // 小店随心推
+)
+
+//time_granularity
+//
+//string
+//
+//时间粒度 ，如果不传，返回查询日期内的聚合数据
+//允许值:
+//TIME_GRANULARITY_DAILY (按天维度),会返回每天的数据
+//TIME_GRANULARITY_HOURLY (按小时维度)，会返回每小时维度的数据
+
+type TimeGranularity string
+
+const (
+	TimeGranularityDaily TimeGranularity = "TIME_GRANULARITY_DAILY"  // 按天维度
+	TimeGranularityHour  TimeGranularity = "TIME_GRANULARITY_HOURLY" // 按小时维度
 )

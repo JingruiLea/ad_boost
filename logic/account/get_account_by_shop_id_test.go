@@ -21,7 +21,7 @@ func TestGetAdAccountByShopID(t *testing.T) {
 			name: "",
 			args: args{
 				ctx:    context.Background(),
-				shopID: 65330948,
+				shopID: 19642944,
 			},
 			wantData: nil,
 			wantErr:  false,

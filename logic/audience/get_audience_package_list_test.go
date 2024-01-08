@@ -20,7 +20,7 @@ func TestGetAudiencePackageList(t *testing.T) {
 			args: args{
 				ctx: context.Background(),
 				req: &GetAudiencePackageListReq{
-					AdvertiserID: 1748031128935424,
+					AdvertiserID: 1703886601680909,
 					Filtering:    nil,
 					Page:         1,
 					PageSize:     10,

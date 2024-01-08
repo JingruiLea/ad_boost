@@ -27,8 +27,10 @@ func main() {
 }
 
 func Init() {
-	boost.Init()
+	//组件初始化
 	redis_dal.Init()
 	dal.Init()
+	//业务初始化
+	boost.Init()
 	fmt.Printf("init success. now:%s", time.Now().Format("2006-01-02 15:04:05"))
 }

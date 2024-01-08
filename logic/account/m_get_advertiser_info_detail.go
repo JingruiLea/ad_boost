@@ -10,11 +10,12 @@ import (
 	"time"
 )
 
-func MGetAdInfoDetail(ctx context.Context, adIDs []int64) ([]*AdAccount, error) {
+func MGetAdvertiserInfoDetail(ctx context.Context, adIDs []int64) ([]*AdAccount, error) {
 	params := map[string]interface{}{
 		"advertiser_ids": adIDs,
 	}
-	var resp GetAdInfoDetailRespData
+	var resp MGetAdInfoDetailRespData
+	//adIDs[0] for access_token
 	err := httpclient.NewClient().AdGet(ctx, adIDs[0], "https://ad.oceanengine.com/open_api/2/advertiser/info/", &resp, params)
 	if err != nil {
 		logs.CtxErrorf(ctx, "GetAdAccount httpclient.NewClient().Get error: %v", err)
@@ -24,7 +25,7 @@ func MGetAdInfoDetail(ctx context.Context, adIDs []int64) ([]*AdAccount, error) 
 	return resp, nil
 }
 
-type GetAdInfoDetailRespData []*AdAccount
+type MGetAdInfoDetailRespData []*AdAccount
 
 type AdAccount struct {
 	Address                 *string `json:"address"`
