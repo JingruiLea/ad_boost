@@ -15,11 +15,8 @@ import (
 	"github.com/JingruiLea/ad_boost/utils"
 	"github.com/jinzhu/now"
 	"sort"
-	"strings"
 	"time"
 )
-
-type Roi float64
 
 var boostOn bool
 
@@ -34,121 +31,131 @@ var intervalSeconds int64 = 1
 // warning_ad_map
 var warningAdMap = make(map[int64]*model.Ad)
 
+type CmdFilter func(cmd string) bool
+
 func Init() {
 	BoostV2MonitorStart(context.Background())
-	lark.RegisterTextHandler(context.Background(), func(msg string) string {
-		logs.CtxInfof(context.Background(), "收到消息:%s", msg)
-		switch {
-		case strings.HasPrefix(msg, "boost init"):
-			err := BoostInit(context.Background(), 1748031128935424)
-			if err != nil {
-				return fmt.Sprintf("boost init failed, err:%v", err)
-			}
-			return "boost init done"
-		case strings.HasPrefix(msg, "boost start"):
-			var err error
-			adArr := strings.Split(msg, " ")
-			if len(adArr) == 4 {
-				startTime, err = time.ParseInLocation("2006-01-0215:04", adArr[2]+adArr[3], time.Local)
-				if err != nil {
-					larkAndLog(context.Background(), "time.Parse failed, err:%v", err)
-				}
-			}
-			BoostStart(context.Background(), 1748031128935424, startTime)
-			return "boost start"
-		case strings.HasPrefix(msg, "boost stop"):
-			boostOn = false
-			tickCount = 0
-			return "boost stop"
-		case strings.HasPrefix(msg, "boost status"):
-			return fmt.Sprintf("boost status: %v", boostOn)
-		case strings.HasPrefix(msg, "boost interval"):
-			adArr := strings.Split(msg, " ")
-			if len(adArr) != 3 {
-				return "boost interval failed,参数不对"
-			}
-			intervalSecond := utils.Str2I64(adArr[2])
-			if intervalSecond == 0 {
-				return "boost interval failed,参数不对"
-			}
-			intervalSeconds = intervalSecond
-			return fmt.Sprintf("boost interval:%d", intervalSeconds)
-		case strings.HasPrefix(msg, "boost fake run"):
-			fakeRun = true
-			return "boost fake run"
-		case strings.HasPrefix(msg, "boost fake stop"):
-			fakeRun = false
-			//实时报表
-		case strings.HasPrefix(msg, "boost report start"):
-			AlarmOpen = true
-			return "boost report"
-		case strings.HasPrefix(msg, "boost report stop"):
-			AlarmOpen = false
-		case strings.HasPrefix(msg, "更新出价"):
-			//更新出价 ID 出价
-			//更新出价 123 0.5
-			adArr := strings.Split(msg, " ")
-			if len(adArr) != 3 {
-				return "更新出价失败,参数不对"
-			}
-			adID := utils.Str2I64(adArr[1])
-			if adID == 0 {
-				return "更新出价失败,参数不对"
-			}
-			bid := utils.Str2Float64(adArr[2])
-			if bid == 0 {
-				return "更新出价失败,参数不对"
-			}
-			err := ad.UpdateAdBid(context.Background(), 1748031128935424, []*ad.Bid{
-				{
-					AdId: adID,
-					Bid:  bid,
-				},
-			})
-			if err != nil {
-				return fmt.Sprintf("更新出价失败, err:%v", err)
-			}
-
-		case strings.HasPrefix(msg, "停止"):
-			//停止 ID
-			adArr := strings.Split(msg, " ")
-			if len(adArr) != 2 {
-				return "停止失败,参数不对"
-			}
-			adID := utils.Str2I64(adArr[1])
-			if adID == 0 {
-				return "停止失败,参数不对"
-			}
-			err := ad.UpdateAdStatus(context.Background(), &ad.UpdateAdStatusReq{
-				AdvertiserID: 1748031128935424,
-				AdIDs:        []int64{adID},
-				OptStatus:    ad.OptStatusDisable,
-			})
-			if err != nil {
-				return fmt.Sprintf("停止失败, err:%v", err)
-			}
-
-		case strings.HasPrefix(msg, "启动"):
-			//启动 ID
-			adArr := strings.Split(msg, " ")
-			if len(adArr) != 2 {
-				return "启动失败,参数不对"
-			}
-			adID := utils.Str2I64(adArr[1])
-			if adID == 0 {
-				return "启动失败,参数不对"
-			}
-			err := ad.UpdateAdStatus(context.Background(), &ad.UpdateAdStatusReq{
-				AdvertiserID: 1748031128935424,
-				AdIDs:        []int64{adID},
-				OptStatus:    ad.OptStatusEnable,
-			})
-			if err != nil {
-				return fmt.Sprintf("启动失败, err:%v", err)
-			}
-		}
-		return ""
-	})
+	//lark.RegisterTextHandler(context.Background(), func(msg string) string {
+	//	logs.CtxInfof(context.Background(), "收到消息:%s", msg)
+	//	switch {
+	//	case strings.HasPrefix(msg, "boost init"):
+	//		accountID := utils.Str2I64(strings.Split(msg, " ")[2])
+	//		if accountID == 0 {
+	//			return "boost init failed,参数不对"
+	//		}
+	//		err := BoostInit(context.Background(), accountID)
+	//		if err != nil {
+	//			return fmt.Sprintf("boost init failed, err:%v", err)
+	//		}
+	//		return "boost init done"
+	//	case strings.HasPrefix(msg, "boost start"):
+	//		var err error
+	//		adArr := strings.Split(msg, " ")
+	//		if len(adArr) == 4 {
+	//			startTime, err = time.ParseInLocation("2006-01-0215:04", adArr[2]+adArr[3], time.Local)
+	//			if err != nil {
+	//				larkAndLog(context.Background(), "time.Parse failed, err:%v", err)
+	//			}
+	//		}
+	//		accountID := utils.Str2I64(adArr[2])
+	//		if accountID == 0 {
+	//			return "boost start failed,参数不对"
+	//		}
+	//		BoostStart(context.Background(), 1748031128935424, startTime)
+	//		return "boost start"
+	//	case strings.HasPrefix(msg, "boost stop"):
+	//		boostOn = false
+	//		tickCount = 0
+	//		return "boost stop"
+	//	case strings.HasPrefix(msg, "boost status"):
+	//		return fmt.Sprintf("boost status: %v", boostOn)
+	//	case strings.HasPrefix(msg, "boost interval"):
+	//		adArr := strings.Split(msg, " ")
+	//		if len(adArr) != 3 {
+	//			return "boost interval failed,参数不对"
+	//		}
+	//		intervalSecond := utils.Str2I64(adArr[2])
+	//		if intervalSecond == 0 {
+	//			return "boost interval failed,参数不对"
+	//		}
+	//		intervalSeconds = intervalSecond
+	//		return fmt.Sprintf("boost interval:%d", intervalSeconds)
+	//	case strings.HasPrefix(msg, "boost fake run"):
+	//		fakeRun = true
+	//		return "boost fake run"
+	//	case strings.HasPrefix(msg, "boost fake stop"):
+	//		fakeRun = false
+	//		//实时报表
+	//	case strings.HasPrefix(msg, "boost report start"):
+	//		AlarmOpen = true
+	//		return "boost report"
+	//	case strings.HasPrefix(msg, "boost report stop"):
+	//		AlarmOpen = false
+	//	case strings.HasPrefix(msg, "更新出价"):
+	//		//更新出价 ID 出价
+	//		//更新出价 123 0.5
+	//		adArr := strings.Split(msg, " ")
+	//		if len(adArr) != 3 {
+	//			return "更新出价失败,参数不对"
+	//		}
+	//		adID := utils.Str2I64(adArr[1])
+	//		if adID == 0 {
+	//			return "更新出价失败,参数不对"
+	//		}
+	//		bid := utils.Str2Float64(adArr[2])
+	//		if bid == 0 {
+	//			return "更新出价失败,参数不对"
+	//		}
+	//		err := ad.UpdateAdBid(context.Background(), 1748031128935424, []*ad.Bid{
+	//			{
+	//				AdId: adID,
+	//				Bid:  bid,
+	//			},
+	//		})
+	//		if err != nil {
+	//			return fmt.Sprintf("更新出价失败, err:%v", err)
+	//		}
+	//
+	//	case strings.HasPrefix(msg, "停止"):
+	//		//停止 ID
+	//		adArr := strings.Split(msg, " ")
+	//		if len(adArr) != 2 {
+	//			return "停止失败,参数不对"
+	//		}
+	//		adID := utils.Str2I64(adArr[1])
+	//		if adID == 0 {
+	//			return "停止失败,参数不对"
+	//		}
+	//		err := ad.UpdateAdStatus(context.Background(), &ad.UpdateAdStatusReq{
+	//			AdvertiserID: 1748031128935424,
+	//			AdIDs:        []int64{adID},
+	//			OptStatus:    ttypes.OptStatusDisable,
+	//		})
+	//		if err != nil {
+	//			return fmt.Sprintf("停止失败, err:%v", err)
+	//		}
+	//
+	//	case strings.HasPrefix(msg, "启动"):
+	//		//启动 ID
+	//		adArr := strings.Split(msg, " ")
+	//		if len(adArr) != 2 {
+	//			return "启动失败,参数不对"
+	//		}
+	//		adID := utils.Str2I64(adArr[1])
+	//		if adID == 0 {
+	//			return "启动失败,参数不对"
+	//		}
+	//		err := ad.UpdateAdStatus(context.Background(), &ad.UpdateAdStatusReq{
+	//			AdvertiserID: 1748031128935424,
+	//			AdIDs:        []int64{adID},
+	//			OptStatus:    ttypes.OptStatusEnable,
+	//		})
+	//		if err != nil {
+	//			return fmt.Sprintf("启动失败, err:%v", err)
+	//		}
+	//	}
+	//	return ""
+	//})
 }
 
 func BoostInit(ctx context.Context, accountID int64) error {
@@ -229,7 +236,7 @@ func BoostInit(ctx context.Context, accountID int64) error {
 	}
 	larkAndLog(ctx, "更新ROI和出价到默认值成功")
 	//启动所有广告
-	err = ad.MUpdateAdStatus(ctx, accountID, adIDs, ad.OptStatusEnable)
+	err = ad.MUpdateAdStatus(ctx, accountID, adIDs, ttypes.OptStatusEnable)
 	if err != nil {
 		logs.CtxErrorf(ctx, "ad.MUpdateAdStatus failed, err:%v", err)
 		return err
@@ -277,7 +284,7 @@ func BoostLoop(ctx context.Context, accountID int64, t time.Time) {
 
 func BoostOnce(ctx context.Context, accountID int64) {
 	//正在投放
-	totalAds, err := ad.GetAdListByStatus(ctx, accountID, ttypes.AdStatusDeliveryOk)
+	totalAds, err := ad.GetAdListByStatus(ctx, accountID, ttypes.AdStatusDeliveryOk, 0, nil)
 	if err != nil {
 		logs.CtxErrorf(ctx, "ad.GetAdListByStatus failed, err:%v", err)
 		lark.SendRoomMessage(ctx, fmt.Sprintf("ad.GetAdListByStatus failed, err:%v", err))
@@ -289,7 +296,7 @@ func BoostOnce(ctx context.Context, accountID int64) {
 		return
 	}
 	//暂停的计划
-	respPause, err := ad.GetAdListByStatus(ctx, accountID, ttypes.AdStatusDisable)
+	respPause, err := ad.GetAdListByStatus(ctx, accountID, ttypes.AdStatusDisable, 0, nil)
 	if err != nil {
 		logs.CtxErrorf(ctx, "ad.GetAdListByStatus failed, err:%v", err)
 		lark.SendRoomMessage(ctx, fmt.Sprintf("ad.GetAdListByStatus failed, err:%v", err))
@@ -311,7 +318,7 @@ func BoostOnce(ctx context.Context, accountID int64) {
 			err = ad.UpdateAdStatus(ctx, &ad.UpdateAdStatusReq{
 				AdvertiserID: accountID,
 				AdIDs:        pausedIDs,
-				OptStatus:    ad.OptStatusEnable,
+				OptStatus:    ttypes.OptStatusEnable,
 			})
 			if err != nil {
 				logs.CtxErrorf(ctx, "ad.UpdateAdStatus failed, err:%v", err)
@@ -346,7 +353,7 @@ func BoostOnce(ctx context.Context, accountID int64) {
 			lark.SendRoomMessage(ctx, fmt.Sprintf("!ok, adID:%d", item.AdID))
 			continue
 		}
-		adReportItems = append(adReportItems, item.ToModel(adItem.DeliverySetting.CPABid, adItem.DeliverySetting.ROIGoal))
+		adReportItems = append(adReportItems, item.ToModel(adItem.DeliverySetting.CPABid, adItem.DeliverySetting.ROIGoal, "", 0))
 	}
 	err = ad_dal.CreateAdReportItem(ctx, adReportItems)
 	if err != nil {
@@ -443,7 +450,7 @@ func BoostOnce(ctx context.Context, accountID int64) {
 		pCost := totalCost - cost
 		if pCost > CostThreshold && cost > 0 {
 			//整体降价10%
-			larkAndLog(ctx, "整体降价10%")
+			larkAndLog(ctx, "整体降价百分之10")
 			for _, report := range reports {
 				item := adMap[report.AdID]
 				err = ad.UpdateAdBid(ctx, accountID, []*ad.Bid{
@@ -461,7 +468,7 @@ func BoostOnce(ctx context.Context, accountID int64) {
 		}
 		if pCost < CostMinThreshold && cost > 0 {
 			//整体提价10%
-			larkAndLog(ctx, "整体提价10%")
+			larkAndLog(ctx, "整体提价百分之10")
 			for _, report := range reports {
 				item := adMap[report.AdID]
 				err = ad.UpdateAdBid(ctx, accountID, []*ad.Bid{
@@ -494,7 +501,7 @@ func BoostOnce(ctx context.Context, accountID int64) {
 					err = ad.UpdateAdStatus(ctx, &ad.UpdateAdStatusReq{
 						AdvertiserID: accountID,
 						AdIDs:        []int64{item.AdID},
-						OptStatus:    ad.OptStatusDisable,
+						OptStatus:    ttypes.OptStatusDisable,
 					})
 					if err != nil {
 						logs.CtxErrorf(ctx, "ad.UpdateAdStatus failed, err:%v", err)
@@ -517,7 +524,7 @@ func BoostOnce(ctx context.Context, accountID int64) {
 						err = ad.UpdateAdStatus(ctx, &ad.UpdateAdStatusReq{
 							AdvertiserID: accountID,
 							AdIDs:        []int64{adID},
-							OptStatus:    ad.OptStatusEnable,
+							OptStatus:    ttypes.OptStatusEnable,
 						})
 						if err != nil {
 							logs.CtxErrorf(ctx, "ad.UpdateAdStatus failed, err:%v", err)
@@ -549,5 +556,5 @@ const (
 const DecreaseBidRatio = 0.92  // 出价降低的比例
 const IncreaseRoiRatio = 1.3   // 出价提高的比例
 const CostThreshold = 1000.0   // 消耗的阈值, 10分钟1000元
-const CostMinThreshold = 200.0 // 消耗的阈值, 10分钟100元
+const CostMinThreshold = 200.0 // 消耗的阈值, 10分钟200元
 const DefaultBudget = 7000

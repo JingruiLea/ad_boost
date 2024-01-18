@@ -35,6 +35,9 @@ CREATE TABLE ad (
     qcpx_mode VARCHAR(255) NOT NULL DEFAULT '' COMMENT '智能优惠券状态',
     allow_qcpx TINYINT(1) NOT NULL DEFAULT 0 COMMENT '是否支持智能优惠券',
 
+    aweme_info TEXT COMMENT '抖音信息',
+    extra TEXT COMMENT '额外信息',
+
     created_at DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3) COMMENT '创建时间',
     updated_at DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3) ON UPDATE CURRENT_TIMESTAMP(3) COMMENT '更新时间',
     deleted_at DATETIME(3) NULL DEFAULT NULL COMMENT '删除时间',
@@ -42,4 +45,3 @@ CREATE TABLE ad (
     UNIQUE KEY (ad_id),
     KEY idx_advertiser_id (advertiser_id)
 ) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COMMENT '广告信息';
-

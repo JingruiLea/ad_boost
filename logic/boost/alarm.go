@@ -10,6 +10,7 @@ import (
 	"github.com/JingruiLea/ad_boost/logic/ad"
 	"github.com/JingruiLea/ad_boost/logic/ad_report"
 	"github.com/JingruiLea/ad_boost/model"
+	"github.com/JingruiLea/ad_boost/model/bo"
 	"github.com/JingruiLea/ad_boost/model/ttypes"
 	"github.com/JingruiLea/ad_boost/utils"
 	jsoniter "github.com/json-iterator/go"
@@ -65,7 +66,7 @@ func GenReportByFilter(ctx context.Context, accountID int64, filter *ad.Filter) 
 		logs.CtxInfof(ctx, "AsyncAlarm resp == nil || len(resp.List) == 0")
 		return "没有正在投放的计划"
 	}
-	adMap := make(map[int64]*ad.Ad, len(resp.List))
+	adMap := make(map[int64]*bo.Ad, len(resp.List))
 	adIDs := make([]int64, 0, len(resp.List))
 	for _, a := range resp.List {
 		adIDs = append(adIDs, a.AdID)
@@ -86,7 +87,7 @@ func GenReportByFilter(ctx context.Context, accountID int64, filter *ad.Filter) 
 	msg := ""
 	for _, report := range reports {
 		msg += MakeAdReportString(adMap, report)
-		models = append(models, report.ToModel(adMap[report.AdID].DeliverySetting.CPABid, adMap[report.AdID].DeliverySetting.ROIGoal))
+		models = append(models, report.ToModel(adMap[report.AdID].DeliverySetting.CPABid, adMap[report.AdID].DeliverySetting.ROIGoal, "", 0))
 	}
 	err = ad_dal.CreateAdReportItem(ctx, models)
 	if err != nil {
@@ -95,7 +96,7 @@ func GenReportByFilter(ctx context.Context, accountID int64, filter *ad.Filter) 
 	return msg
 }
 
-func MakeAdReportString(adMap map[int64]*ad.Ad, report *ad_report.AdReport) string {
+func MakeAdReportString(adMap map[int64]*bo.Ad, report *ad_report.AdReport) string {
 	ds := adMap[report.AdID].DeliverySetting
 	a := adMap[report.AdID]
 

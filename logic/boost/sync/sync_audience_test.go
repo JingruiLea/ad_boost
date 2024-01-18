@@ -21,7 +21,7 @@ func TestSyncAudiencePackage(t *testing.T) {
 			name: "",
 			args: args{
 				ctx:          context.Background(),
-				advertiserID: 1748031128935424,
+				advertiserID: 1784698853978186,
 				filter:       nil,
 			},
 			wantErr: false,

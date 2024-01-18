@@ -7,7 +7,29 @@ import (
 	"github.com/JingruiLea/ad_boost/model/ttypes"
 	"github.com/JingruiLea/ad_boost/utils"
 	"github.com/JingruiLea/ad_boost/utils/httpclient"
+	"time"
 )
+
+func GetNowLiveRoomList(ctx context.Context, accountID, awemeID int64) (*GetLiveRoomListRespData, error) {
+	var resp GetLiveRoomListRespData
+	var req = &GetLiveRoomListReq{
+		AdvertiserID: accountID,
+		AwemeID:      awemeID,
+		DateTime:     time.Now().Format("2006-01-02"),
+		RoomStatus:   RoomStatusLiving,
+		AdStatus:     AdStatusAll,
+		Fields:       RoomMetricsFieldStatCost.All(),
+		Page:         1,
+		PageSize:     10,
+	}
+	err := httpclient.NewClient().AdGet(ctx, accountID, "https://api.oceanengine.com/open_api/v1.0/qianchuan/today_live/room/get/", &resp, utils.Obj2Map(req))
+	if err != nil {
+		logs.CtxErrorf(ctx, "GetReport httpclient.NewClient().AdGet error: %v", err)
+		return nil, err
+	}
+	fmt.Printf("GetReport respMap: \n\n%s\n\n", utils.GetJsonStr(resp))
+	return &resp, err
+}
 
 func GetLiveRoomList(ctx context.Context, req *GetLiveRoomListReq) (*GetLiveRoomListRespData, error) {
 	var resp GetLiveRoomListRespData

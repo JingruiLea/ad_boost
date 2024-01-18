@@ -1,10 +1,7 @@
 package bo
 
 import (
-	"github.com/JingruiLea/ad_boost/model"
 	"github.com/JingruiLea/ad_boost/model/ttypes"
-	"github.com/JingruiLea/ad_boost/utils"
-	"gorm.io/datatypes"
 )
 
 // Audience 定向人群设置
@@ -48,11 +45,39 @@ type InactiveTag struct {
 	InactiveType   string `json:"inactive_type"`   // 失效类型；枚举值：EXPIRE，TAG_OFFLINE，MANUAL_OFFLINE
 }
 
-func (a *Audience) ToModel() *model.Audience {
-	ret := &model.Audience{
-		AudienceID: a.OrientationID,
-		Name:       a.OrientationName,
-		Config:     datatypes.JSON(utils.GetJsonStr(a)),
+func NewAudience() *Audience {
+	return &Audience{
+		OrientationID:          0,
+		AudienceMode:           ttypes.AudienceModeCustom,
+		ExcludeLimitedRegion:   1,
+		DistrictType:           false,
+		District:               "",
+		City:                   nil,
+		LocationType:           "",
+		Gender:                 "",
+		Age:                    nil,
+		AwemeFanBehaviors:      ttypes.AwemeFanBehaviorsCommentedUser.Common(),
+		AwemeFanBehaviorsDays:  ttypes.AwemeFanBehaviorsDays60,
+		AwemeFanCategories:     nil,
+		AwemeFanAccounts:       nil,
+		AutoExtendEnabled:      0,
+		AutoExtendTargets:      nil,
+		Platform:               nil,
+		SmartInterestAction:    "",
+		ActionScene:            nil,
+		ActionDays:             0,
+		ActionCategories:       nil,
+		ActionWords:            nil,
+		InterestCategories:     nil,
+		InterestWords:          nil,
+		RetargetingTagsInclude: nil,
+		RetargetingTagsExclude: nil,
+		LivePlatformTags:       nil,
+		NewCustomer:            "",
 	}
-	return ret
+}
+
+func (a *Audience) WithOrientationID(orientationId int64) *Audience {
+	a.OrientationID = orientationId
+	return a
 }

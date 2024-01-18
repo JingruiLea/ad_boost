@@ -3,6 +3,7 @@ package boost
 import (
 	"context"
 	"fmt"
+	"github.com/JingruiLea/ad_boost/common/envs"
 	"github.com/JingruiLea/ad_boost/common/logs"
 	"github.com/JingruiLea/ad_boost/dal/account_dal"
 	"github.com/JingruiLea/ad_boost/dal/ad_dal"
@@ -15,13 +16,25 @@ import (
 )
 
 func BoostV2MonitorStart(ctx context.Context) {
+	//dev环境不启动
+	if envs.IsDev() {
+		logs.CtxInfof(ctx, "dev env, not start monitor.")
+		return
+	}
 	allAccounts, err := account_dal.MGetAllAccount(ctx)
 	if err != nil {
 		logs.CtxErrorf(ctx, "BoostV2MonitorStart account_dal.MGetAllAccount error. err: %s", err.Error())
 	}
-	for _, account := range allAccounts {
-		NewBoostMonitor(ctx, account.AdvertiserID, 5).Start(ctx)
-	}
+	utils.SafeGo(ctx, func() {
+		for _, account := range allAccounts {
+			time.Sleep(time.Second * 5)
+			if _, ok := BoostMonitorMap[account.AdvertiserID]; ok {
+				logs.CtxInfof(ctx, "account %d monitor already started.", account.AdvertiserID)
+				continue
+			}
+			NewBoostMonitor(ctx, account.AdvertiserID, 5).Start(ctx)
+		}
+	})
 }
 
 type BoostMonitor struct {
@@ -63,13 +76,13 @@ func (b *BoostMonitor) Loop(ctx context.Context) {
 		logs.CtxInfof(ctx, "%d monitor is closed.", b.AccountID)
 		return
 	}
-	totalAds, err := ad.GetAdListByStatus(ctx, b.AccountID, ttypes.AdStatusDeliveryOk)
+	totalAds, err := ad.GetAdListByStatus(ctx, b.AccountID, ttypes.AdStatusDeliveryOk, 0, nil)
 	if err != nil {
 		logs.CtxErrorf(ctx, "ad.GetAdListByStatus failed, err:%v", err)
 		return
 	}
 	if len(totalAds) == 0 {
-		larkAndLog(ctx, "account:%d has no ads in delivery", b.AccountID)
+		//larkAndLog(ctx, "account:%d has no ads in delivery", b.AccountID)
 		return
 	}
 	logs.CtxInfof(ctx, "total ads:%d", len(totalAds))
@@ -98,7 +111,7 @@ func (b *BoostMonitor) Loop(ctx context.Context) {
 			logs.CtxErrorf(ctx, "!ok, adID:%d", item.AdID)
 			continue
 		}
-		adReportItems = append(adReportItems, item.ToModel(adItem.DeliverySetting.CPABid, adItem.DeliverySetting.ROIGoal))
+		adReportItems = append(adReportItems, item.ToModel(adItem.DeliverySetting.CPABid, adItem.DeliverySetting.ROIGoal, adItem.Name, 0))
 	}
 	err = ad_dal.CreateAdReportItem(ctx, adReportItems)
 	if err != nil {

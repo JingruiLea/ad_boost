@@ -32,6 +32,7 @@ func init() {
 		log.SetLevel(logrus.DebugLevel)
 	} else {
 		log.SetLevel(logrus.DebugLevel)
+		log.AddHook(&AlertHook{})
 	}
 	log.AddHook(&truncateHook{})
 }

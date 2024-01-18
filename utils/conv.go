@@ -1,8 +1,10 @@
 package utils
 
 import (
+	"bytes"
 	"encoding/json"
 	"fmt"
+	jsoniter "github.com/json-iterator/go"
 	"math"
 	"strconv"
 )
@@ -43,19 +45,22 @@ func GetJsonStr(v interface{}) string {
 }
 
 func Obj2Map(v interface{}) map[string]interface{} {
-	b, err := json.Marshal(v)
+	b, err := jsoniter.Marshal(v)
 	if err != nil {
 		fmt.Printf(err.Error())
 	}
 	ret := make(map[string]interface{})
-	err = json.Unmarshal(b, &ret)
-	if err != nil {
-		fmt.Printf(err.Error())
-	}
+	decoder := jsoniter.NewDecoder(bytes.NewReader(b))
+	decoder.UseNumber()
+	err = decoder.Decode(&ret)
 	return ret
 }
 
 func RoundFloat(val float64, places int) float64 {
 	shift := math.Pow(10, float64(places))
 	return math.Round(val*shift) / shift
+}
+
+func Ptr[T any](v T) *T {
+	return &v
 }

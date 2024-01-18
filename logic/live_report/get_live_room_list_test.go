@@ -27,9 +27,9 @@ func TestGetLiveRoomList(t *testing.T) {
 			args: args{
 				ctx: context.Background(),
 				req: &GetLiveRoomListReq{
-					AdvertiserID: 1703886601680909,
-					AwemeID:      2691211639665967,
-					DateTime:     "2024-01-07",
+					AdvertiserID: 1777719708674115,
+					AwemeID:      2008170909142180,
+					DateTime:     "2024-01-17",
 					RoomStatus:   RoomStatusAll,
 					AdStatus:     AdStatusAll,
 					Fields:       RoomMetricsFieldStatCost.All(),

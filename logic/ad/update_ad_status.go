@@ -4,12 +4,13 @@ import (
 	"context"
 	"fmt"
 	"github.com/JingruiLea/ad_boost/common/logs"
+	"github.com/JingruiLea/ad_boost/model/ttypes"
 	"github.com/JingruiLea/ad_boost/utils"
 	"github.com/JingruiLea/ad_boost/utils/httpclient"
 	"log"
 )
 
-func MUpdateAdStatus(ctx context.Context, advertiserID int64, allAdIDs []int64, optStatus OptStatus) error {
+func MUpdateAdStatus(ctx context.Context, advertiserID int64, allAdIDs []int64, optStatus ttypes.OptStatus) error {
 	var i int
 	for i = 0; i < len(allAdIDs); i += MaxAdsPerUpdate {
 		end := i + MaxAdsPerUpdate
@@ -47,16 +48,7 @@ func UpdateAdStatus(ctx context.Context, req *UpdateAdStatusReq) error {
 }
 
 type UpdateAdStatusReq struct {
-	AdvertiserID int64     `json:"advertiser_id"`
-	AdIDs        []int64   `json:"ad_ids"` //最多10个
-	OptStatus    OptStatus `json:"opt_status"`
+	AdvertiserID int64            `json:"advertiser_id"`
+	AdIDs        []int64          `json:"ad_ids"` //最多10个
+	OptStatus    ttypes.OptStatus `json:"opt_status"`
 }
-
-type OptStatus string
-
-const (
-	OptStatusEnable  OptStatus = "ENABLE"
-	OptStatusDisable OptStatus = "DISABLE"
-	OptStatusDelete  OptStatus = "DELETE"
-	OptStatusRevive  OptStatus = "REVIVE"
-)

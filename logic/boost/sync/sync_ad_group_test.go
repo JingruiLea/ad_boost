@@ -22,7 +22,7 @@ func TestSyncAdGroup(t *testing.T) {
 			name: "",
 			args: args{
 				ctx:          context.Background(),
-				advertiserID: 1703886601680909,
+				advertiserID: 1784698853978186,
 				filter: &ad_group.Filter{
 					MarketingGoal: ttypes.MarketingGoalLivePromGoods,
 				},

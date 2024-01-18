@@ -9,7 +9,7 @@ import (
 func TestGetSuggestRoi(t *testing.T) {
 	type args struct {
 		ctx context.Context
-		ad  *ttypes.Ad
+		ad  *ttypes.CreateAd
 	}
 	tests := []struct {
 		name    string

@@ -3,7 +3,7 @@ package sync
 import (
 	"context"
 	"github.com/JingruiLea/ad_boost/common/logs"
-	"github.com/JingruiLea/ad_boost/dal/ad_dal"
+	"github.com/JingruiLea/ad_boost/dal/audience_dal"
 	"github.com/JingruiLea/ad_boost/logic/ad_group"
 	"github.com/JingruiLea/ad_boost/logic/audience"
 	"github.com/JingruiLea/ad_boost/model"
@@ -26,9 +26,10 @@ func SyncAudiencePackage(ctx context.Context, advertiserID int64, filter *ad_gro
 		}
 		audiences := make([]*model.Audience, 0, len(resp.List))
 		for _, audiencePacakge := range resp.List {
-			audiences = append(audiences, audiencePacakge.ToModel())
+			var reciever model.Audience
+			audiences = append(audiences, reciever.FromBO(audiencePacakge, advertiserID))
 		}
-		err = ad_dal.CreateOrUpdateAudience(ctx, audiences)
+		err = audience_dal.CreateOrUpdateAudience(ctx, audiences)
 		if err != nil {
 			logs.CtxErrorf(ctx, "SyncAdGroup ad_dal.CreateOrUpdateAdGroup error: %v", err)
 			return err

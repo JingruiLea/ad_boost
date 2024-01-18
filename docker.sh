@@ -32,5 +32,25 @@ echo "The version is $IMAGE_TAG"
 
 # 构建镜像
 docker build . -t registry.cn-hangzhou.aliyuncs.com/pdfgpthz/ad_boost:"$IMAGE_TAG"
-docker push registry.cn-hangzhou.aliyuncs.com/pdfgpthz/ad_boost:"$IMAGE_TAG"
 
+# 推送镜像
+MAX_TRIES=5
+TRIES=0
+SUCCESS=false
+
+while [ $TRIES -lt $MAX_TRIES ]; do
+    if docker push registry.cn-hangzhou.aliyuncs.com/pdfgpthz/ad_boost:"$IMAGE_TAG"; then
+        SUCCESS=true
+        break
+    else
+        TRIES=$((TRIES+1))
+        echo "Retry $TRIES/$MAX_TRIES..."
+        sleep 5 # 等待5秒再重试
+    fi
+done
+
+if [ "$SUCCESS" = true ]; then
+    echo "Docker push succeeded"
+else
+    echo "Docker push failed after $MAX_TRIES attempts"
+fi

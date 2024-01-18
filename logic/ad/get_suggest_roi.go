@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"github.com/JingruiLea/ad_boost/common/logs"
+	"github.com/JingruiLea/ad_boost/model/bo"
 	"github.com/JingruiLea/ad_boost/model/ttypes"
 	"github.com/JingruiLea/ad_boost/utils"
 	"github.com/JingruiLea/ad_boost/utils/httpclient"
@@ -19,7 +20,7 @@ type GetSuggestRoiReq struct {
 	CampaignScene  ttypes.CampaignScene  `json:"campaign_scene,omitempty"`
 }
 
-func GetSuggestRoi(ctx context.Context, ad *ttypes.Ad) (float64, error) {
+func GetSuggestRoi(ctx context.Context, ad *bo.CreateAd) (float64, error) {
 	var req GetSuggestRoiReq
 	req.AdvertiserID = ad.AdvertiserID
 	req.AwemeID = ad.AwemeID

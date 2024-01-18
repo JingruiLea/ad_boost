@@ -17,7 +17,7 @@ func GetAudiencePackageList(ctx context.Context, req *GetAudiencePackageListReq)
 		logs.CtxErrorf(ctx, "GetAudiencePackageList httpclient.NewClient().Get error: %v", err)
 		return nil, err
 	}
-	fmt.Printf("GetAudiencePackageList respMap: %s", utils.GetJsonStr(resp))
+	fmt.Printf("GetAudiencePackageList respMap: \n\n%s\n\n", utils.GetJsonStr(resp))
 	return &resp, nil
 }
 
@@ -31,11 +31,6 @@ type GetAudiencePackageListReq struct {
 type AudiencePackageFilter struct {
 	Name string  `json:"name"` // 定向包名称
 	IDs  []int64 `json:"id"`   // 定向包ID
-}
-
-type GetAudiencePackageListResp struct {
-	ttypes.BaseResp
-	Data *GetAudiencePackageListRespData `json:"data"`
 }
 
 type GetAudiencePackageListRespData struct {

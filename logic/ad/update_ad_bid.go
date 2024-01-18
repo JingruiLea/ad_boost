@@ -8,15 +8,15 @@ import (
 	"github.com/JingruiLea/ad_boost/utils/httpclient"
 )
 
-func MUpdateAdBids(ctx context.Context, advertiserID int64, allBudgets []*Budget) error {
-	for i := 0; i < len(allBudgets); i += MaxAdsPerUpdate {
+func MUpdateAdBids(ctx context.Context, advertiserID int64, allBid []*Bid) error {
+	for i := 0; i < len(allBid); i += MaxAdsPerUpdate {
 		end := i + MaxAdsPerUpdate
-		if end > len(allBudgets) {
-			end = len(allBudgets)
+		if end > len(allBid) {
+			end = len(allBid)
 		}
-		budgets := allBudgets[i:end]
+		budgets := allBid[i:end]
 
-		err := UpdateAdBudget(ctx, advertiserID, budgets)
+		err := UpdateAdBid(ctx, advertiserID, budgets)
 		if err != nil {
 			return fmt.Errorf("UpdateAdBudget failed in batch starting at index %d, err: %v", i, err)
 		}

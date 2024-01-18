@@ -239,9 +239,11 @@ type AdReport struct {
 	StatCost             float64 `json:"stat_cost"`                // 消耗
 }
 
-func (a *AdReport) ToModel(cpa, roi float64) *model.AdReportItem {
+func (a *AdReport) ToModel(cpa, roi float64, name string, roomID int64) *model.AdReportItem {
 	ret := &model.AdReportItem{
 		AdID:                 a.AdID,
+		AdName:               name,
+		RoomID:               roomID,
 		AdvertiserId:         a.AdvertiserId,
 		ClickCnt:             a.ClickCnt,
 		ConvertCnt:           a.ConvertCnt,

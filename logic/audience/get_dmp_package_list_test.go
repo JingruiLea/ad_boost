@@ -28,10 +28,10 @@ func TestGetDMPPackageList(t *testing.T) {
 			args: args{
 				ctx: context.Background(),
 				req: &GetDMPPackageListReq{
-					AdvertiserId:        1703886601680909,
+					AdvertiserId:        1784698853978186,
 					RetargetingTagsType: ttypes.RetargetingTagsTypeAll,
 					Offset:              0,
-					Limit:               10,
+					Limit:               100,
 				},
 			},
 			wantErr: false,

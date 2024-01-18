@@ -2,9 +2,16 @@ package ad
 
 import (
 	"context"
+	"github.com/JingruiLea/ad_boost/dal"
+	"github.com/JingruiLea/ad_boost/dal/redis_dal"
 	"reflect"
 	"testing"
 )
+
+func init() {
+	dal.Init()
+	redis_dal.Init()
+}
 
 func TestGetAdDetail(t *testing.T) {
 	type args struct {
@@ -22,8 +29,8 @@ func TestGetAdDetail(t *testing.T) {
 			name: "",
 			args: args{
 				ctx:          context.Background(),
-				advertiserID: 1703886601680909,
-				adID:         0,
+				advertiserID: 1786309327331339,
+				adID:         1787688640320515,
 			},
 			want:    nil,
 			wantErr: false,

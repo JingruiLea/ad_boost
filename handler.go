@@ -5,7 +5,6 @@ import (
 	"context"
 	"github.com/JingruiLea/ad_boost/common/logs"
 	"github.com/JingruiLea/ad_boost/lark"
-	"github.com/JingruiLea/ad_boost/logic/auth"
 	"github.com/gin-gonic/gin"
 	"io/ioutil"
 	"net/http"
@@ -78,7 +77,7 @@ func initRoutes() {
 	handlers = append(handlers, &GinH{
 		Method:  http.MethodGet,
 		Path:    "/api/v1/auth/oceanengine/callback",
-		Handler: auth.OceanEngineCallback,
+		Handler: OceanEngineCallback,
 	})
 }
 

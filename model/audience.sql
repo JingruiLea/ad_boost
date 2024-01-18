@@ -1,6 +1,7 @@
 CREATE TABLE `audience` (
     `id` bigint NOT NULL AUTO_INCREMENT COMMENT '主键ID',
     `audience_id` bigint NOT NULL COMMENT '人群包ID',
+    `account_id` bigint NOT NULL COMMENT '账户ID',
     `name` varchar(255) NOT NULL COMMENT '定向包名称',
     `config` json DEFAULT NULL COMMENT '配置',
 

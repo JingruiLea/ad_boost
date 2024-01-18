@@ -1,14 +1,14 @@
-package auth
+package main
 
 import (
 	"context"
 	"github.com/JingruiLea/ad_boost/common/logs"
 	"github.com/JingruiLea/ad_boost/dal/redis_dal"
+	"github.com/JingruiLea/ad_boost/logic/auth"
+	"github.com/JingruiLea/ad_boost/logic/boost/sync"
 	"github.com/JingruiLea/ad_boost/utils"
 	"time"
 )
-
-const InitAccountID = 1008611
 
 func OceanEngineCallback(ctx context.Context, params map[string]string, requestBody []byte) (interface{}, error) {
 	logs.CtxInfof(ctx, utils.GetJsonStr(params))
@@ -22,15 +22,15 @@ func OceanEngineCallback(ctx context.Context, params map[string]string, requestB
 		logs.CtxErrorf(ctx, "OceanEngineCallback set redis_dal error. %s", err.Error())
 		return nil, err
 	}
-	at, rt, err := Auth(ctx, authCode)
+	at, rt, err := auth.Auth(ctx, authCode)
 	if err != nil {
 		logs.CtxErrorf(ctx, "OceanEngineCallback Auth error. %s", err.Error())
 		return nil, err
 	}
 	logs.CtxInfof(ctx, "got access_token: %s, refresh_token: %s", at, rt)
-	err = SaveAtRtToRedis(ctx, at, rt, InitAccountID)
+	err = sync.SyncAccount(ctx, at, rt)
 	if err != nil {
-		logs.CtxErrorf(ctx, "OceanEngineCallback SaveAtRtToRedis error. %s", err.Error())
+		logs.CtxErrorf(ctx, "OceanEngineCallback sync.SyncAccount error. %s", err.Error())
 		return nil, err
 	}
 	return "授权成功!", nil

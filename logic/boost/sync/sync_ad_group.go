@@ -26,7 +26,7 @@ func SyncAdGroup(ctx context.Context, advertiserID int64, filter *ad_group.Filte
 		}
 		adGroupList := make([]*model.AdGroup, 0, len(resp.List))
 		for _, campaign := range resp.List {
-			adGroupList = append(adGroupList, campaign.ToModel())
+			adGroupList = append(adGroupList, campaign.ToModel(advertiserID))
 		}
 		err = ad_dal.CreateOrUpdateAdGroup(ctx, adGroupList)
 		if err != nil {

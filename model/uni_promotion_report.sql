@@ -1,0 +1,27 @@
+CREATE TABLE uni_promotion_report (
+    id BIGINT PRIMARY KEY COMMENT '自增id' AUTO_INCREMENT,
+    uni_ad_id BIGINT NOT NULL COMMENT '广告id',
+    start_time VARCHAR(255) NOT NULL COMMENT '当前周期开始时间',
+    end_time VARCHAR(255) NOT NULL COMMENT '当前周期结束时间',
+    modify_time VARCHAR(255) NOT NULL COMMENT '修改时间',
+    create_time VARCHAR(255) NOT NULL COMMENT '创建时间',
+    marketing_goal VARCHAR(255) NOT NULL COMMENT '营销目标',
+    roi2_goal DOUBLE NOT NULL COMMENT '支付ROI目标',
+    budget_mode VARCHAR(255) NOT NULL COMMENT '预算类型',
+    budget DOUBLE NOT NULL COMMENT '预算',
+    status VARCHAR(255) NOT NULL COMMENT '投放状态',
+    opt_status VARCHAR(255) NOT NULL COMMENT '操作状态',
+    delivery_seconds INT NOT NULL COMMENT '投放时长',
+    room_info TEXT NOT NULL COMMENT '主播信息',
+    stat_cost DOUBLE NOT NULL COMMENT '整体消耗',
+    total_prepay_and_pay_order_roi2 DOUBLE NOT NULL COMMENT '整体支付ROI',
+    total_pay_order_gmv_for_roi2 INT NOT NULL COMMENT '整体成交金额',
+    total_pay_order_count_for_roi2 DOUBLE NOT NULL COMMENT '整体成交订单数',
+    total_cost_per_pay_order_for_roi2 DOUBLE NOT NULL COMMENT '整体成交订单成本',
+    total_prepay_order_count_for_roi2 INT NOT NULL COMMENT '整体预售订单数',
+    total_prepay_order_gmv_for_roi2 DOUBLE NOT NULL COMMENT '整体预售订单金额',
+
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+    updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
+    deleted_at TIMESTAMP NULL DEFAULT NULL COMMENT '删除时间'
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;

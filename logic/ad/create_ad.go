@@ -3,13 +3,13 @@ package ad
 import (
 	"fmt"
 	"github.com/JingruiLea/ad_boost/common/logs"
-	"github.com/JingruiLea/ad_boost/model/ttypes"
+	"github.com/JingruiLea/ad_boost/model/bo"
 	"github.com/JingruiLea/ad_boost/utils"
 	"github.com/JingruiLea/ad_boost/utils/httpclient"
 	"golang.org/x/net/context"
 )
 
-func CreateAd(ctx context.Context, ad *ttypes.Ad) (adID int64, err error) {
+func CreateAd(ctx context.Context, ad *bo.CreateAd) (adID int64, err error) {
 	url := "https://api.oceanengine.com/open_api/v1.0/qianchuan/ad/create/"
 	var resp CreateAdRespData
 	fmt.Printf("AdCreate reqMap: %s", utils.GetJsonStr(ad))

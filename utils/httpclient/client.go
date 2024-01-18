@@ -10,6 +10,7 @@ import (
 	jsoniter "github.com/json-iterator/go"
 	"io/ioutil"
 	"net/http"
+	"reflect"
 )
 
 type Client struct {
@@ -157,11 +158,12 @@ func (c *Client) Post(ctx context.Context, url string, headers map[string]string
 }
 
 func convertToString(v interface{}) string {
-	switch value := v.(type) {
-	case string:
-		return value
+	vt := reflect.TypeOf(v)
+	switch vt.Kind() {
+	case reflect.String:
+		return reflect.ValueOf(v).String()
 	default:
-		jsonValue, _ := jsoniter.Marshal(value)
+		jsonValue, _ := jsoniter.Marshal(v)
 		return string(jsonValue)
 	}
 }

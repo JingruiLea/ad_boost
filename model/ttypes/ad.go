@@ -1,197 +1,5 @@
 package ttypes
 
-const FulltimeSchedule = "111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111"
-
-type Ad struct {
-	AdvertiserID                  int64                        `json:"advertiser_id"`
-	MarketingGoal                 MarketingGoal                `json:"marketing_goal"`
-	CampaignScene                 CampaignScene                `json:"campaign_scene"`
-	MarketingScene                MarketingScene               `json:"marketing_scene"`
-	Name                          string                       `json:"name"`
-	CampaignId                    int64                        `json:"campaign_id,omitempty"`    //千川广告组ID
-	IsIntelligent                 int                          `json:"is_intelligent,omitempty"` //是否开启智能投放, 0:不开启, 1:开启
-	LabAdType                     LabAdType                    `json:"lab_ad_type,omitempty"`
-	AwemeID                       int64                        `json:"aweme_id,omitempty"`         //即将开播的抖音号ID
-	ProductIds                    []int                        `json:"product_ids,omitempty"`      //品ID列表, 仅当营销目标为视频带货时必填
-	DeliverySetting               *DeliverySetting             `json:"delivery_setting,omitempty"` //投放设置（预算与出价）
-	Audience                      *Audience                    `json:"audience,omitempty"`         //人群定向
-	CreativeMaterialMode          CreativeMaterialMode         `json:"creative_material_mode,omitempty"`
-	FirstIndustryId               int                          `json:"first_industry_id,omitempty"`
-	SecondIndustryId              int                          `json:"second_industry_id,omitempty"`
-	ThirdIndustryId               int                          `json:"third_industry_id,omitempty"`
-	AdKeywords                    []string                     `json:"ad_keywords,omitempty"`
-	IsHomepageHide                int                          `json:"is_homepage_hide,omitempty"`
-	CreativeList                  []*Creative                  `json:"creative_list,omitempty"`
-	ProgrammaticCreativeMediaList []*ProgrammaticCreativeMedia `json:"programmatic_creative_media_list,omitempty"`
-	ProgrammaticCreativeTitleList []*ProgrammaticCreativeTitle `json:"programmatic_creative_title_list,omitempty"`
-	ProgrammaticCreativeCard      *ProgrammaticCreativeCard    `json:"programmatic_creative_card,omitempty"`
-	CreativeAutoGenerate          int                          `json:"creative_auto_generate,omitempty"`
-	DynamicCreative               int                          `json:"dynamic_creative,omitempty"`
-	Keywords                      []*Keyword                   `json:"keywords,omitempty"`
-	TrackUrl                      *TrackUrl                    `json:"track_url,omitempty"`
-}
-
-// NewLiveCommonAd 创建直播通投策略
-func NewLiveCommonAd(name string, awemeID, adID, adGroupID int64) *Ad {
-	return &Ad{
-		AdvertiserID:   adID,
-		MarketingGoal:  MarketingGoalLivePromGoods,
-		CampaignScene:  CampaignSceneDailySale,
-		MarketingScene: MarketingSceneFeed,
-		Name:           name,
-		CampaignId:     adGroupID,
-		IsIntelligent:  0,
-		LabAdType:      LabAdTypeNotLabAd,
-		AwemeID:        awemeID,
-		ProductIds:     nil,
-		DeliverySetting: &DeliverySetting{
-			SmartBidType:     SmartBidTypeSmartBidCustom,
-			QcpxMode:         QcpxModeOff,
-			BudgetMode:       BudgetModeDay,
-			LiveScheduleType: LiveScheduleTypeScheduleFromNow,
-			ScheduleTime:     FulltimeSchedule,
-		},
-		Audience:             nil,
-		CreativeMaterialMode: CreativeMaterialModeCustom,
-		FirstIndustryId:      0,
-		SecondIndustryId:     0,
-		ThirdIndustryId:      0,
-		AdKeywords:           nil,
-		IsHomepageHide:       0,
-		CreativeList: []*Creative{
-			{
-				ImageMode:             ImageModeAwemeLiveRoom,
-				VideoMaterial:         nil,
-				ImageMaterial:         nil,
-				TitleMaterial:         nil,
-				PromotionCardMaterial: nil,
-			},
-		},
-		ProgrammaticCreativeMediaList: nil,
-		ProgrammaticCreativeTitleList: nil,
-		ProgrammaticCreativeCard:      nil,
-		CreativeAutoGenerate:          0,
-		DynamicCreative:               0,
-		Keywords:                      nil,
-		TrackUrl:                      nil,
-	}
-}
-
-func (a *Ad) WithRoi(roiGoal int32) *Ad {
-	a.DeliverySetting.RoiGoal = float32(roiGoal)
-	a.DeliverySetting.ExternalAction = ExternalActionAdConvertTypeLiveSuccessorderPay
-	a.DeliverySetting.DeepExternalAction = DeepExternalActionAdConvertTypeLivePayRoi
-	a.DeliverySetting.DeepBidType = DeepBidTypeMin
-	return a
-}
-
-func (a *Ad) Copy() *Ad {
-	return &Ad{
-		AdvertiserID:                  a.AdvertiserID,
-		MarketingGoal:                 a.MarketingGoal,
-		CampaignScene:                 a.CampaignScene,
-		MarketingScene:                a.MarketingScene,
-		Name:                          a.Name,
-		CampaignId:                    a.CampaignId,
-		IsIntelligent:                 a.IsIntelligent,
-		LabAdType:                     a.LabAdType,
-		AwemeID:                       a.AwemeID,
-		ProductIds:                    a.ProductIds,
-		DeliverySetting:               a.DeliverySetting,
-		Audience:                      a.Audience,
-		CreativeMaterialMode:          a.CreativeMaterialMode,
-		FirstIndustryId:               a.FirstIndustryId,
-		SecondIndustryId:              a.SecondIndustryId,
-		ThirdIndustryId:               a.ThirdIndustryId,
-		AdKeywords:                    a.AdKeywords,
-		IsHomepageHide:                a.IsHomepageHide,
-		CreativeList:                  a.CreativeList,
-		ProgrammaticCreativeMediaList: a.ProgrammaticCreativeMediaList,
-		ProgrammaticCreativeTitleList: a.ProgrammaticCreativeTitleList,
-		ProgrammaticCreativeCard:      a.ProgrammaticCreativeCard,
-		CreativeAutoGenerate:          a.CreativeAutoGenerate,
-		DynamicCreative:               a.DynamicCreative,
-		Keywords:                      a.Keywords,
-		TrackUrl:                      a.TrackUrl,
-	}
-}
-
-func (a *Ad) WithBudget(budget float32) *Ad {
-	a.DeliverySetting.Budget = budget
-	return a
-}
-
-func (a *Ad) WithBid(bid float32) *Ad {
-	a.DeliverySetting.CpaBid = bid
-	return a
-}
-
-func (a *Ad) WithFollowUser() *Ad {
-	a.DeliverySetting.ExternalAction = ExternalActionAdConvertTypeNewFollowAction
-	return a
-}
-
-func NewAudience() *Audience {
-	return &Audience{
-		AudienceMode:           AudienceModeCustom,
-		ExcludeLimitedRegion:   1,
-		DistrictType:           false,
-		District:               "",
-		City:                   nil,
-		LocationType:           "",
-		Gender:                 "",
-		Age:                    nil,
-		AwemeFanBehaviors:      AwemeFanBehaviorsCommentedUser.Common(),
-		AwemeFanBehaviorsDays:  AwemeFanBehaviorsDays60,
-		AwemeFanCategories:     nil,
-		AwemeFanAccounts:       nil,
-		AutoExtendEnabled:      0,
-		AutoExtendTargets:      nil,
-		Platform:               nil,
-		SmartInterestAction:    "",
-		ActionScene:            nil,
-		ActionDays:             0,
-		ActionCategories:       nil,
-		ActionWords:            nil,
-		InterestCategories:     nil,
-		InterestWords:          nil,
-		Ac:                     nil,
-		RetargetingTagsInclude: nil,
-		RetargetingTagsExclude: nil,
-		LivePlatformTags:       nil,
-		NewCustomer:            "",
-	}
-}
-
-func (a *Audience) WithYounger() *Audience {
-	a.Age = []Age{
-		AgeBetween1823, AgeBetween2430, AgeBetween3140,
-	}
-	return a
-}
-
-func (a *Audience) WithOlder() *Audience {
-	a.Age = []Age{
-		AgeBetween3140, AgeBetween4149, AgeAbove50,
-	}
-	return a
-}
-
-func (a *Audience) WithMiddle() *Audience {
-	a.Age = []Age{
-		AgeBetween2430, AgeBetween3140, AgeBetween4149,
-	}
-	return a
-}
-
-type Creative struct {
-	ImageMode             ImageMode                  `json:"image_mode"`
-	VideoMaterial         *VideoMaterial             `json:"video_material,omitempty"`
-	ImageMaterial         *ImageMaterial             `json:"image_material,omitempty"`
-	TitleMaterial         *ProgrammaticCreativeTitle `json:"title_material,omitempty"`
-	PromotionCardMaterial *PromotionCardMaterial     `json:"promotion_card_material,omitempty"`
-}
-
 type VideoMaterial struct {
 	VideoId      string `json:"video_id"`
 	VideoCoverId string `json:"video_cover_id"`
@@ -204,33 +12,33 @@ type ImageMaterial struct {
 
 type Audience struct {
 	AudienceMode           AudienceMode          `json:"audience_mode"`
-	OrientationId          int                   `json:"orientation_id"`
+	OrientationId          int64                 `json:"orientation_id,omitempty"`
 	ExcludeLimitedRegion   int                   `json:"exclude_limited_region"` //是否排除限运区域，0:不排除，1:排除
 	DistrictType           bool                  `json:"district_type,omitempty"`
 	District               string                `json:"district,omitempty"`
 	City                   []int                 `json:"city,omitempty"`
 	LocationType           LocationType          `json:"location_type,omitempty"`
-	Gender                 Gender                `json:"gender"`
-	Age                    []Age                 `json:"age"`
-	AwemeFanBehaviors      []AwemeFanBehavior    `json:"aweme_fan_behaviors"`
-	AwemeFanBehaviorsDays  AwemeFanBehaviorsDays `json:"aweme_fan_behaviors_days"`
-	AwemeFanCategories     []int                 `json:"aweme_fan_categories"`
-	AwemeFanAccounts       []int                 `json:"aweme_fan_accounts"`
+	Gender                 Gender                `json:"gender,omitempty"`
+	Age                    []Age                 `json:"age,omitempty"`
+	AwemeFanBehaviors      []AwemeFanBehavior    `json:"aweme_fan_behaviors,omitempty"`
+	AwemeFanBehaviorsDays  AwemeFanBehaviorsDays `json:"aweme_fan_behaviors_days,omitempty"`
+	AwemeFanCategories     []int                 `json:"aweme_fan_categories,omitempty"`
+	AwemeFanAccounts       []int                 `json:"aweme_fan_accounts,omitempty"`
 	AutoExtendEnabled      int                   `json:"auto_extend_enabled"`
-	AutoExtendTargets      []string              `json:"auto_extend_targets"`
-	Platform               []string              `json:"platform,omitempty"`
-	SmartInterestAction    string                `json:"smart_interest_action"`
-	ActionScene            []string              `json:"action_scene"`
-	ActionDays             int                   `json:"action_days"`
-	ActionCategories       []int                 `json:"action_categories"`
-	ActionWords            []int                 `json:"action_words"`
-	InterestCategories     []int                 `json:"interest_categories"`
-	InterestWords          []int                 `json:"interest_words"`
-	Ac                     []string              `json:"ac"`
-	RetargetingTagsInclude []int                 `json:"retargeting_tags_include"`
-	RetargetingTagsExclude []int                 `json:"retargeting_tags_exclude"`
-	LivePlatformTags       []string              `json:"live_platform_tags"`
-	NewCustomer            string                `json:"new_customer"`
+	AutoExtendTargets      []string              `json:"auto_extend_targets,omitempty"`
+	Platform               []string              `json:"platform,omitempty,omitempty"`
+	SmartInterestAction    string                `json:"smart_interest_action,omitempty"`
+	ActionScene            []ActionScene         `json:"action_scene,omitempty"`
+	ActionDays             ActionDays            `json:"action_days,omitempty"`
+	ActionCategories       []int                 `json:"action_categories,omitempty"`
+	ActionWords            []int                 `json:"action_words,omitempty"`
+	InterestCategories     []int                 `json:"interest_categories,omitempty"`
+	InterestWords          []int                 `json:"interest_words,omitempty"`
+	Ac                     []string              `json:"ac,omitempty"`
+	RetargetingTagsInclude []int                 `json:"retargeting_tags_include,omitempty"`
+	RetargetingTagsExclude []int                 `json:"retargeting_tags_exclude,omitempty"`
+	LivePlatformTags       []string              `json:"live_platform_tags,omitempty"`
+	NewCustomer            string                `json:"new_customer,omitempty"`
 }
 
 type PromotionCardMaterial struct {
@@ -281,31 +89,6 @@ type ProgrammaticCreativeCard struct {
 	PromotionCardButtonSmartOptimization int      `json:"promotion_card_button_smart_optimization"`
 }
 
-type DeliverySetting struct {
-	SmartBidType       SmartBidType       `json:"smart_bid_type"`
-	QcpxMode           QcpxMode           `json:"qcpx_mode"`
-	ExternalAction     ExternalAction     `json:"external_action"`
-	DeepExternalAction DeepExternalAction `json:"deep_external_action,omitempty"`
-	DeepBidType        DeepBidType        `json:"deep_bid_type,omitempty"`
-	RoiGoal            float32            `json:"roi_goal,omitempty"` //支付ROI目标，最多支持两位小数，0.01～100
-	//预算，最多支持两位小数
-	//当预算模式为日预算时，预算范围是300 - 9999999.99；
-	//当预算模式为总预算时，预算范围是max(300,投放天数x100) - 9999999.99
-	//注意：托管计划仅支持日预算的预算范围
-	Budget                float32           `json:"budget,omitempty"`
-	BudgetMode            BudgetMode        `json:"budget_mode,omitempty"`
-	CpaBid                float32           `json:"cpa_bid,omitempty"` //出价范围0.1-10000，2位小数
-	VideoScheduleType     VideoScheduleType `json:"video_schedule_type,omitempty"`
-	LiveScheduleType      LiveScheduleType  `json:"live_schedule_type,omitempty"`
-	StartTime             string            `json:"start_time,omitempty"`
-	EndTime               string            `json:"end_time,omitempty"`
-	ScheduleTime          string            `json:"schedule_time,omitempty"`
-	ScheduleFixedRange    int               `json:"schedule_fixed_range,omitempty"`
-	EnableAutoPause       int               `json:"enable_auto_pause,omitempty"`        //是否开启超成本自动暂停，0:不开启，1:开启,注意：仅短视频+开启托管时，支持
-	AutoManageStrategyCmd int               `json:"auto_manage_strategy_cmd,omitempty"` //托管策略，0 优先跑量 1 优先成本,注意：仅短视频+开启托管时，支持
-	EnableFollowMaterial  int               `json:"enable_follow_material,omitempty"`   //是否优质素材自动同步投放 0 关闭 1 开启,注意：仅短视频+开启托管时，支持
-}
-
 type MarketingGoal string
 
 const (
@@ -317,12 +100,34 @@ const (
 	MarketingGoalVideoPromGoods MarketingGoal = "VIDEO_PROM_GOODS"
 )
 
+func (m MarketingGoal) String() string {
+	switch m {
+	case MarketingGoalLiveAll:
+		return "全部"
+	case MarketingGoalLivePromGoods:
+		return "直播带货"
+	case MarketingGoalVideoPromGoods:
+		return "视频带货"
+	default:
+		return "未知营销目标"
+	}
+}
+
 type CampaignScene string
 
 const (
 	// CampaignSceneDailySale DAILY_SALE 代表日常销售
 	CampaignSceneDailySale CampaignScene = "DAILY_SALE"
 )
+
+func (c CampaignScene) String() string {
+	switch c {
+	case CampaignSceneDailySale:
+		return "日常销售"
+	default:
+		return "未知营销场景"
+	}
+}
 
 type MarketingScene string
 
@@ -332,6 +137,17 @@ const (
 	// MarketingSceneSearch SEARCH 搜索广告
 	MarketingSceneSearch MarketingScene = "SEARCH"
 )
+
+func (m MarketingScene) String() string {
+	switch m {
+	case MarketingSceneFeed:
+		return "信息流广告"
+	case MarketingSceneSearch:
+		return "搜索广告"
+	default:
+		return "未知营销场景"
+	}
+}
 
 // LabAdType
 // 注意：
@@ -346,6 +162,17 @@ const (
 	LabAdTypeLabAd LabAdType = "LAB_AD"
 )
 
+func (l LabAdType) String() string {
+	switch l {
+	case LabAdTypeNotLabAd:
+		return "自定义"
+	case LabAdTypeLabAd:
+		return "托管"
+	default:
+		return "未知"
+	}
+}
+
 // CreativeMaterialMode 创意素材类型
 // 若抖音号为“合作达人”类型，仅支持CUSTOM_CREATIVE
 // 若抖音号为“官方/自运营”类型：
@@ -359,6 +186,17 @@ const (
 	// CreativeMaterialModeCustom CUSTOM_CREATIVE 自定义创意
 	CreativeMaterialModeCustom CreativeMaterialMode = "CUSTOM_CREATIVE"
 )
+
+func (c CreativeMaterialMode) String() string {
+	switch c {
+	case CreativeMaterialModeProgrammatic:
+		return "程序化创意"
+	case CreativeMaterialModeCustom:
+		return "自定义创意"
+	default:
+		return "未知"
+	}
+}
 
 type ImageMode string
 
@@ -394,6 +232,17 @@ const (
 	SmartBidTypeSmartBidConservative SmartBidType = "SMART_BID_CONSERVATIVE"
 )
 
+func (s SmartBidType) String() string {
+	switch s {
+	case SmartBidTypeSmartBidCustom:
+		return "控成本投放"
+	case SmartBidTypeSmartBidConservative:
+		return "放量投放"
+	default:
+		return "未知"
+	}
+}
+
 // ExternalAction 定义转化目标
 type ExternalAction string
 
@@ -422,6 +271,35 @@ const (
 	ExternalActionAdConvertTypeLiveSuccessorderPay7Days ExternalAction = "AD_CONVERT_TYPE_LIVE_SUCCESSORDER_PAY_7DAYS"
 )
 
+func (e ExternalAction) String() string {
+	switch e {
+	case ExternalActionAdConvertTypeShopping:
+		return "商品购买"
+	case ExternalActionAdConvertTypeQCFollowAction:
+		return "粉丝提升"
+	case ExternalActionAdConvertTypeQCMustBuy:
+		return "点赞评论"
+	case ExternalActionAdConvertTypeLiveEnterAction:
+		return "进入直播间"
+	case ExternalActionAdConvertTypeLiveClickProductAction:
+		return "直播间商品点击"
+	case ExternalActionAdConvertTypeLiveSuccessorderAction:
+		return "直播间下单"
+	case ExternalActionAdConvertTypeNewFollowAction:
+		return "直播间粉丝提升"
+	case ExternalActionAdConvertTypeLiveCommentAction:
+		return "直播间评论"
+	case ExternalActionAdConvertTypeLiveSuccessorderPay:
+		return "直播间成交"
+	case ExternalActionAdConvertTypeLiveSuccessorderSettle:
+		return "直播间结算"
+	case ExternalActionAdConvertTypeLiveSuccessorderPay7Days:
+		return "直播间成交-7日总成交"
+	default:
+		return "未知"
+	}
+}
+
 // DeepExternalAction
 // 注意：
 // 1. 当 smart_bid_type 为SMART_BID_CONSERVATIVE&SMART_BID_CUSTOM时，不支持
@@ -432,6 +310,15 @@ const (
 	// DeepExternalActionAdConvertTypeLivePayRoi 支付ROI
 	DeepExternalActionAdConvertTypeLivePayRoi DeepExternalAction = "AD_CONVERT_TYPE_LIVE_PAY_ROI"
 )
+
+func (d DeepExternalAction) String() string {
+	switch d {
+	case DeepExternalActionAdConvertTypeLivePayRoi:
+		return "支付ROI"
+	default:
+		return "未知"
+	}
+}
 
 // DeepBidType
 // 注意：
@@ -447,6 +334,17 @@ const (
 	DeepBidTypePayRoi DeepBidType = "PAY_ROI"
 )
 
+func (d DeepBidType) String() string {
+	switch d {
+	case DeepBidTypeMin:
+		return "最小化成本"
+	case DeepBidTypePayRoi:
+		return "支付ROI"
+	default:
+		return "未知"
+	}
+}
+
 // BudgetMode 预算类型
 // 注意： 托管计划仅支持BUDGET_MODE_DAY 日预算
 type BudgetMode string
@@ -456,7 +354,22 @@ const (
 	BudgetModeDay BudgetMode = "BUDGET_MODE_DAY"
 	// BudgetModeTotal 总预算
 	BudgetModeTotal BudgetMode = "BUDGET_MODE_TOTAL"
+	//BUDGET_MODE_INFINITE 不限预算
+	BudgetModeInfinite BudgetMode = "BUDGET_MODE_INFINITE"
 )
+
+func (b BudgetMode) String() string {
+	switch b {
+	case BudgetModeDay:
+		return "日预算"
+	case BudgetModeTotal:
+		return "总预算"
+	case BudgetModeInfinite:
+		return "不限预算"
+	default:
+		return "未知预算类型"
+	}
+}
 
 type VideoScheduleType string
 
@@ -754,6 +667,21 @@ const (
 	OptStatusRevive  OptStatus = "REVIVE"
 )
 
+func (o OptStatus) String() string {
+	switch o {
+	case OptStatusEnable:
+		return "启用"
+	case OptStatusDisable:
+		return "暂停"
+	case OptStatusDelete:
+		return "删除"
+	case OptStatusRevive:
+		return "恢复"
+	default:
+		return "未知"
+	}
+}
+
 type AdStatus string
 
 const (
@@ -785,8 +713,70 @@ const (
 	AdStatusSystemDisable           AdStatus = "SYSTEM_DISABLE" //系统暂停，因低效计划被系统自动暂停
 	AdStatusQuotaDisable            AdStatus = "QUOTA_DISABLE"
 	AdStatusRoi2Disable             AdStatus = "ROI2_DISABLE" //因该计划关联的抖音号开启全域推广，因此本计划被系统暂停
-
 )
+
+func (a AdStatus) String() string {
+	switch a {
+	case AdStatusDeliveryOk:
+		return "投放中"
+	case AdStatusAudit:
+		return "审核中"
+	case AdStatusReaudit:
+		return "审核中"
+	case AdStatusDelete:
+		return "已删除"
+	case AdStatusDisable:
+		return "暂停"
+	case AdStatusDraft:
+		return "草稿"
+	case AdStatusTimeNoReach:
+		return "未到投放时间"
+	case AdStatusTimeDone:
+		return "已过投放时间"
+	case AdStatusNoSchedule:
+		return "未到投放时间"
+	case AdStatusCreate:
+		return "待审核"
+	case AdStatusOfflineAudit:
+		return "审核中"
+	case AdStatusOfflineBudget:
+		return "预算不足"
+	case AdStatusOfflineBalance:
+		return "余额不足"
+	case AdStatusPreOfflineBudget:
+		return "预算不足"
+	case AdStatusPreOnline:
+		return "待审核"
+	case AdStatusFrozen:
+		return "已冻结"
+	case AdStatusError:
+		return "审核失败"
+	case AdStatusAuditStatusError:
+		return "审核失败"
+	case AdStatusAdvertiserOfflineBudget:
+		return "预算不足"
+	case AdStatusAdvertiserPreOffline:
+		return "预算不足"
+	case AdStatusExternalUrlDisable:
+		return "外部链接不可用"
+	case AdStatusLiveRoomOff:
+		return "直播间已关闭"
+	case AdStatusCampaignDisable:
+		return "计划已暂停"
+	case AdStatusCampaignOfflineBudget:
+		return "计划预算不足"
+	case AdStatusCampaignPreOffline:
+		return "计划预算不足"
+	case AdStatusSystemDisable:
+		return "系统暂停"
+	case AdStatusQuotaDisable:
+		return "额度暂停"
+	case AdStatusRoi2Disable:
+		return "ROI2暂停"
+	default:
+		return "未知"
+	}
+}
 
 type ECPType string
 
@@ -801,6 +791,21 @@ const (
 	ECPTypeCommonStar ECPType = "COMMON_STAR"
 	ECPTypeAgent      ECPType = "AGENT"
 )
+
+func (e ECPType) String() string {
+	switch e {
+	case ECPTypeShop:
+		return "商家"
+	case ECPTypeShopStar:
+		return "商家达人"
+	case ECPTypeCommonStar:
+		return "普通达人"
+	case ECPTypeAgent:
+		return "百应机构"
+	default:
+		return "未知"
+	}
+}
 
 type ExcludeLimitedRegion int
 
@@ -846,3 +851,34 @@ const (
 	TimeGranularityDaily TimeGranularity = "TIME_GRANULARITY_DAILY"  // 按天维度
 	TimeGranularityHour  TimeGranularity = "TIME_GRANULARITY_HOURLY" // 按小时维度
 )
+
+type OrderType string
+
+const (
+	OrderTypeDesc OrderType = "DESC" // 降序
+	OrderTypeAsc  OrderType = "ASC"  // 升序
+)
+
+type AdGroupStatus string
+
+const (
+	AdGroupStatusAll     AdGroupStatus = "ALL"    // 所有包含已删除
+	AdGroupStatusEnable  AdGroupStatus = "ENABLE" // 启用
+	AdGroupStatusDisable AdGroupStatus = "DISABLE"
+	AdGroupStatusDelete  AdGroupStatus = "DELETE"
+)
+
+func (a AdGroupStatus) String() string {
+	switch a {
+	case AdGroupStatusAll:
+		return "所有包含已删除"
+	case AdGroupStatusEnable:
+		return "启用"
+	case AdGroupStatusDisable:
+		return "暂停"
+	case AdGroupStatusDelete:
+		return "已删除"
+	default:
+		return "未知状态"
+	}
+}

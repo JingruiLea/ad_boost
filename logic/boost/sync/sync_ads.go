@@ -12,15 +12,10 @@ import (
 func SyncAds(ctx context.Context, advertiserID int64, adID ...int64) error {
 	pageSize := 10
 	totalPages := 1
-	err := ad_dal.DeleteAdsByAdvertiserID(ctx, advertiserID, adID...)
-	if err != nil {
-		logs.CtxErrorf(ctx, "SyncAds ad_dal.DeleteAdsByAdvertiserID error: %v", err)
-		return err
-	}
 	for page := 1; page <= totalPages; page++ {
 		req := &ad.GetAdListReq{
 			AdvertiserId:     advertiserID,
-			RequestAwemeInfo: ad.AwemeInfoNoInclude,
+			RequestAwemeInfo: ttypes.BoolIntTrue,
 			Filtering: &ad.Filter{
 				MarketingGoal: ttypes.MarketingGoalLivePromGoods,
 			},
@@ -35,14 +30,15 @@ func SyncAds(ctx context.Context, advertiserID int64, adID ...int64) error {
 			logs.CtxErrorf(ctx, "SyncAds ad.GetAdList error: %v", err)
 			return err
 		}
-		if resp == nil || resp.List == nil {
+		if resp == nil || resp.List == nil || len(resp.List) == 0 {
 			logs.CtxInfof(ctx, "SyncAds resp == nil || resp.List == nil")
 			return nil
 		}
 		adList := make([]*model.Ad, 0, len(resp.List))
 		// Here you can process the ads list, resp.List
 		for _, a := range resp.List {
-			m := a.ToModel()
+			var reciever model.Ad
+			m := reciever.FromBO(a)
 			m.AdvertiserID = advertiserID
 			adList = append(adList, m)
 		}

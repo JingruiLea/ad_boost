@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"github.com/JingruiLea/ad_boost/common/logs"
+	"github.com/JingruiLea/ad_boost/model/bo"
 	"github.com/JingruiLea/ad_boost/model/ttypes"
 	"github.com/JingruiLea/ad_boost/utils"
 	"github.com/JingruiLea/ad_boost/utils/httpclient"
@@ -19,7 +20,7 @@ type GetSuggestBidReq struct {
 	CampaignScene  ttypes.CampaignScene  `json:"campaign_scene,omitempty"`
 }
 
-func GetSuggestBid(ctx context.Context, ad *ttypes.Ad) (low, high float32, err error) {
+func GetSuggestBid(ctx context.Context, ad *bo.CreateAd) (low, high float32, err error) {
 	var req GetSuggestBidReq
 	req.AdvertiserID = ad.AdvertiserID
 	req.AwemeID = ad.AwemeID

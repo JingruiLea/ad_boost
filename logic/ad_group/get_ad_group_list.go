@@ -50,18 +50,19 @@ type GetAdGroupListRespData struct {
 }
 
 type Campaign struct {
-	BudgetMode     string  `json:"budget_mode"`
-	CreateDate     string  `json:"create_date"`
-	ID             int64   `json:"id"`
-	MarketingGoal  string  `json:"marketing_goal"`
-	MarketingScene string  `json:"marketing_scene"`
-	Name           string  `json:"name"`
-	Status         string  `json:"status"`
-	Budget         float64 `json:"budget"`
+	BudgetMode     ttypes.BudgetMode     `json:"budget_mode"`
+	CreateDate     string                `json:"create_date"`
+	ID             int64                 `json:"id"`
+	MarketingGoal  ttypes.MarketingGoal  `json:"marketing_goal"`
+	MarketingScene ttypes.MarketingScene `json:"marketing_scene"`
+	Name           string                `json:"name"`
+	Status         ttypes.AdGroupStatus  `json:"status"`
+	Budget         float64               `json:"budget"`
 }
 
-func (c *Campaign) ToModel() *model.AdGroup {
+func (c *Campaign) ToModel(accountID int64) *model.AdGroup {
 	ret := &model.AdGroup{
+		AccountID:      accountID,
 		BudgetMode:     c.BudgetMode,
 		CreateDate:     c.CreateDate,
 		AdGroupID:      c.ID,

@@ -10,19 +10,19 @@ import (
 	"github.com/JingruiLea/ad_boost/utils/httpclient"
 )
 
-func GetAdDetail(ctx context.Context, advertiserID, adID int64) (*GetAdDetailRespData, error) {
+func GetAdDetail(ctx context.Context, accountID, adID int64) (*GetAdDetailRespData, error) {
 	var req = map[string]interface{}{
-		"advertiser_id": advertiserID,
+		"advertiser_id": accountID,
 		"ad_id":         adID,
 	}
 
 	var resp GetAdDetailRespData
-	err := httpclient.NewClient().AdGet(ctx, advertiserID, "https://ad.oceanengine.com/open_api/v1.0/qianchuan/ad/detail/get/", &resp, req)
+	err := httpclient.NewClient().AdGet(ctx, accountID, "https://ad.oceanengine.com/open_api/v1.0/qianchuan/ad/detail/get/", &resp, req)
 	if err != nil {
 		logs.CtxErrorf(ctx, "GetAdAccount httpclient.NewClient().Get error: %v", err)
 		return nil, err
 	}
-	fmt.Printf("GetAdAccount respMap: %s", utils.GetJsonStr(resp))
+	fmt.Printf("GetAdAccount respMap: \n\n%s\n\n", utils.GetJsonStr(resp))
 	return &resp, nil
 }
 
@@ -37,7 +37,7 @@ type GetAdDetailRespData struct {
 	CreativeAutoGenerate int                   `json:"creative_auto_generate"`
 	CreativeList         []*bo.Creative        `json:"creative_list"`
 	CreativeMaterialMode string                `json:"creative_material_mode"`
-	DeliverySetting      *DeliverySetting      `json:"delivery_setting"`
+	DeliverySetting      *bo.DeliverySetting   `json:"delivery_setting"`
 	DynamicCreative      int                   `json:"dynamic_creative"`
 	FirstIndustryId      int                   `json:"first_industry_id"`
 	IsHomepageHide       int                   `json:"is_homepage_hide"`

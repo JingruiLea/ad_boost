@@ -39,19 +39,6 @@ func CreateOrUpdateAdGroup(ctx context.Context, adGroup []*model.AdGroup) (err e
 	return nil
 }
 
-func CreateOrUpdateAudience(ctx context.Context, audience []*model.Audience) (err error) {
-	db := dal.GetDB(ctx)
-	err = db.Clauses(clause.OnConflict{
-		Columns:   []clause.Column{{Name: "audience_id"}},
-		UpdateAll: true,
-	}).Create(&audience).Error
-	if err != nil {
-		logs.CtxErrorf(ctx, "CreateOrUpdateAudience db.Create error: %v", err)
-		return err
-	}
-	return nil
-}
-
 func CreateAdReportItem(ctx context.Context, adReportItem []*model.AdReportItem) (err error) {
 	db := dal.GetDB(ctx)
 	err = db.CreateInBatches(&adReportItem, 500).Error

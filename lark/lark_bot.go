@@ -30,11 +30,11 @@ const EncryptKey = "1iJcXP40z2rOPBYf3VqD6codBZItkbRO"
 const VerificationToken = "rGCakotMu664p648Quqqkh6r5zjWThWE"
 
 const AdBoostChatID = "oc_586a7dec27b417492a5b0ae7ba11a75e"
-const AlertChatID = "" //TODO
+const AlertChatID = "oc_9634312c93f56e516d6501e2425d8f32"
 
 var Bot *lark.Lark
 
-func init() {
+func Init() {
 	Bot = lark.New(
 		lark.WithAppCredential(AppID, AppSec),
 		lark.WithEventCallbackVerify(EncryptKey, VerificationToken),
@@ -82,9 +82,9 @@ func HandleTextMsg(ctx context.Context, msg string, cli *lark.Lark) {
 		return
 	}
 	msg = text["text"]
-
 	for _, h := range handlers {
-		resp := h(msg)
+		hCopy := h
+		resp := hCopy(msg)
 		if resp != "" {
 			_, _, err := cli.Message.Send().ToChatID(AdBoostChatID).SendText(ctx, resp)
 			if err != nil {

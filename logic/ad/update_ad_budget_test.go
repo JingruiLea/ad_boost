@@ -23,7 +23,7 @@ func TestUpdateAdBudget(t *testing.T) {
 				advertiserID: 1748031128935424,
 				budgets: []*Budget{
 					{
-						AdId:   1774392648202275,
+						AdID:   1774392648202275,
 						Budget: 300.00,
 					},
 				},
